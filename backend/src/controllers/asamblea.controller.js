@@ -3,6 +3,7 @@ import {
     crearAsambleaService,
     getAsambleaService,
     updateAsambleaService,
+    deleteAsambleaService,
 } from "../services/asamblea.service.js";
 import {
     handleErrorClient,
@@ -50,6 +51,20 @@ export async function updateAsamblea(req, res){
         if (errorAsamblea) return handleErrorClient(res, 404, errorAsamblea);
 
         handleSuccess(res, 200, "Asamblea actualizada", asamblea);
+    } catch (error) {
+        handleErrorClient(res, 500, error.message);
+    }
+}
+
+export async function deleteAsamblea(req, res){
+    try {
+        const { id } = req.params;
+
+        const [asamblea, errorAsamblea] = await deleteAsambleaService({id});
+
+        if (errorAsamblea) return handleErrorClient(res, 404, errorAsamblea);
+
+        handleSuccess(res, 200, "Asamblea eliminada", asamblea);
     } catch (error) {
         handleErrorClient(res, 500, error.message);
     }

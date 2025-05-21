@@ -54,3 +54,21 @@ export async function updateAsambleaService(query,body){
         return [null, "Error interno del servidor"];
     }
 }
+
+export async function deleteAsambleaService(query){
+    try {
+        const { id } = query;
+        const asambleaRepository = AppDataSource.getRepository(Asamblea);
+        const asambleaFound = await asambleaRepository.findOne({
+            where: { id: id },
+        });
+
+        if (!asambleaFound) return [null, "No se encontró la asamblea"];
+
+        await asambleaRepository.delete(id);
+        return [asambleaFound, null];
+    } catch (error) {
+        console.error("Error al eliminar la asamblea", error);
+        return [null, "Error interno del servidor"];
+    }
+}

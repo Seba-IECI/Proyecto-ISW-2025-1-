@@ -6,6 +6,7 @@ import {
     crearAsamblea,
     getAsamblea,
     updateAsamblea,
+    deleteAsamblea,
 }from "../controllers/asamblea.controller.js";
 
 const router = Router();
@@ -16,6 +17,7 @@ router
 router
     .post("/crearAsamblea",isAdmin,crearAsamblea)
     .get("/getAsamblea",isAdmin, getAsamblea)
-    .patch("/updateAsamblea/:id",isAdmin, updateAsamblea);
+    .patch("/updateAsamblea/:id",isAdmin, updateAsamblea)
+    .delete("/deleteAsamblea/:id",isAdmin, deleteAsamblea);
 
 export default router;
