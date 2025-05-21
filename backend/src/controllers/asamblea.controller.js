@@ -1,6 +1,7 @@
 "use strict";
 import {
-    crearAsambleaService
+    crearAsambleaService,
+    getAsambleaService,
 } from "../services/asamblea.service.js";
 import {
     handleErrorClient,
@@ -21,6 +22,18 @@ export async function crearAsamblea(req, res) {
         if (errorAsamblea) return handleErrorClient(res, 404, errorAsamblea);
 
         handleSuccess(res, 200, "Asamblea creada", asamblea);
+    } catch (error) {
+        handleErrorServer(res, 500, error.message);
+    }
+}
+
+export async function getAsamblea(req, res){
+    try {
+        const [asamblea, errorAsamblea] = await getAsambleaService();
+
+        if (errorAsamblea) return handleErrorClient(res, 404, errorAsamblea);
+
+        handleSuccess(res, 200, "Asambleas encontradas", asamblea);
     } catch (error) {
         handleErrorServer(res, 500, error.message);
     }

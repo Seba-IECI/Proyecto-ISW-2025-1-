@@ -22,3 +22,15 @@ export async function crearAsambleaService(query){
         return [null, "Error interno del servidor"];
     }
 }
+
+export async function getAsambleaService(){
+    try {
+        const asamblea = await AppDataSource.getRepository(Asamblea).find();
+
+        if(asamblea.length === 0) return [null, "No hay asambleas registradas"];
+        return [asamblea, null];
+    } catch (error) {
+        console.error("Error al obtener asambleas:", error);
+        return [null, "Error interno en el servidor"];
+    }
+}
