@@ -34,3 +34,23 @@ export async function getAsambleaService(){
         return [null, "Error interno en el servidor"];
     }
 }
+
+export async function updateAsambleaService(query,body){
+    try {
+        const { id } = query;
+        const { tema, lugar, fecha } = body;
+        const asambleaRepository = AppDataSource.getRepository(Asamblea);
+
+        const asambleaFound = await asambleaRepository.findOne({
+            where: { id: id },
+        });
+
+        if (!asambleaFound) return [null, "No se encontró la asamblea"];
+
+        await asambleaRepository.update(id, body);
+        return [await asambleaRepository.findOne({where: { id: id}}), null];
+    } catch (error) {
+        console.error("Error al actualizar la asamblea", error);
+        return [null, "Error interno del servidor"];
+    }
+}

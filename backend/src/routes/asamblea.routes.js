@@ -5,6 +5,7 @@ import { authenticateJwt } from "../middlewares/authentication.middleware.js";
 import {
     crearAsamblea,
     getAsamblea,
+    updateAsamblea,
 }from "../controllers/asamblea.controller.js";
 
 const router = Router();
@@ -14,6 +15,7 @@ router
 
 router
     .post("/crearAsamblea",isAdmin,crearAsamblea)
-    .get("/getAsamblea",isAdmin, getAsamblea);
+    .get("/getAsamblea",isAdmin, getAsamblea)
+    .patch("/updateAsamblea/:id",isAdmin, updateAsamblea);
 
 export default router;

@@ -2,6 +2,7 @@
 import {
     crearAsambleaService,
     getAsambleaService,
+    updateAsambleaService,
 } from "../services/asamblea.service.js";
 import {
     handleErrorClient,
@@ -36,5 +37,20 @@ export async function getAsamblea(req, res){
         handleSuccess(res, 200, "Asambleas encontradas", asamblea);
     } catch (error) {
         handleErrorServer(res, 500, error.message);
+    }
+}
+
+export async function updateAsamblea(req, res){
+    try {
+        const { id } = req.params;
+        const { body } = req;
+
+        const [asamblea, errorAsamblea] = await updateAsambleaService({id}, body);
+
+        if (errorAsamblea) return handleErrorClient(res, 404, errorAsamblea);
+
+        handleSuccess(res, 200, "Asamblea actualizada", asamblea);
+    } catch (error) {
+        handleErrorClient(res, 500, error.message);
     }
 }
