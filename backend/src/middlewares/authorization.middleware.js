@@ -29,6 +29,16 @@ try {
             "Se requiere un rol de administrador para realizar esta acción."
         );
     }
+
+    if (rolUser !== "directiva"){
+        return handleErrorClient(
+            res,
+            403,
+            "Error al acceder al recurso",
+            "Se requiere un rol de directiva para realizar esta accion."
+            );
+    }
+
     next();
 } catch (error) {
     handleErrorServer(
