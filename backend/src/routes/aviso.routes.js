@@ -6,7 +6,8 @@ import { authenticateJwt } from "../middlewares/authentication.middleware.js";
 import {
     crearAvisoController,
     obtenerAvisosController,
-    modificarAvisoController
+    modificarAvisoController,
+    eliminarAvisoController
     
 }from "../controllers/aviso.controller.js";
 
@@ -21,7 +22,9 @@ router
     .get("/obtenerAvisos", isAdmin, obtenerAvisosController)
     .get("/obtenerAvisos", isDirectiva, obtenerAvisosController)
     .patch("/modificarAviso/:id", isAdmin, modificarAvisoController)
-    .patch("/modificarAviso/:id", isDirectiva, modificarAvisoController);
+    .patch("/modificarAviso/:id", isDirectiva, modificarAvisoController)
+    .delete("/eliminarAviso/:id", isAdmin, eliminarAvisoController)
+    .delete("/eliminarAviso/:id", isDirectiva, eliminarAvisoController);
     
 
 export default router;
