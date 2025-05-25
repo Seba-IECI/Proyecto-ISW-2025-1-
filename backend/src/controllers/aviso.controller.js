@@ -2,7 +2,8 @@
 import { 
     crearAvisoService,
     obtenerAvisosService,
-    modificarAvisoService
+    modificarAvisoService,
+    eliminarAvisoService
 } from "../services/aviso.service.js";
 import {
     handleErrorClient,
@@ -73,6 +74,26 @@ export async function modificarAvisoController(req, res) {
     }
 }
 
+export async function eliminarAvisoController(req, res) {
+    try {
+        const { id } = req.params;
+
+        if (!id) {
+            return handleErrorClient(res, 400, "Falta el parámetro obligatorio: id");
+        }
+
+        const idNum = Number(id);
+        const [aviso, error] = await eliminarAvisoService(idNum);
+
+        if (error) {
+            return handleErrorClient(res, 400, error);
+        }
+
+        return handleSuccess(res, 200, "Aviso eliminado exitosamente", aviso);
+    } catch (error) {
+        return handleErrorServer(res, 500, error.message);
+    }
+}
 
 
 

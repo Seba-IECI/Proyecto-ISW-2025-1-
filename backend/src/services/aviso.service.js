@@ -52,3 +52,21 @@ export async function modificarAvisoService(id, camposActualizar) {
         return [null, "Error interno del servidor"];
     }
 }
+
+export async function eliminarAvisoService(id) {
+    try {
+        const avisoRepository = AppDataSource.getRepository(Aviso);
+
+        const avisoFound = await avisoRepository.findOne({
+            where: { id: id },
+        });
+
+        if (!avisoFound) return [null, "No se encontró el aviso"];
+
+        await avisoRepository.delete(id);
+        return [avisoFound, null];
+    } catch (error) {
+        console.error("Error al eliminar el aviso", error);
+        return [null, "Error interno del servidor"];
+    }
+}
