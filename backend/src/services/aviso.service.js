@@ -22,3 +22,15 @@ export async function crearAvisoService(query){
         return [null, "Error interno del servidor"];
     }
 }
+
+export async function obtenerAvisosService(){
+    try {
+        const aviso = await AppDataSource.getRepository(Aviso).find();
+
+        if(aviso.length === 0) return [null, "No hay avisos registrados"];
+        return [aviso, null];
+    } catch (error) {
+        console.error("Error al obtener avisos:", error);
+        return [null, "Error interno en el servidor"];
+    }
+}

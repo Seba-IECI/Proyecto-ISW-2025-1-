@@ -1,6 +1,7 @@
 "use strict";
 import { 
-    crearAvisoService 
+    crearAvisoService,
+    obtenerAvisosService
 } from "../services/aviso.service.js";
 import {
     handleErrorClient,
@@ -27,6 +28,17 @@ export async function crearAvisoController(req, res) {
     }
 }
 
+export async function obtenerAvisosController(req, res){
+    try {
+        const [aviso, errorAviso] = await obtenerAvisosService();
+
+        if (errorAviso) return handleErrorClient(res, 404, errorAviso);
+
+        handleSuccess(res, 200, "Avisos encontrados", aviso);
+    } catch (error) {
+        handleErrorServer(res, 500, error.message);
+    }
+}
 
 
 
