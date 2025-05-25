@@ -12,10 +12,10 @@ const AvisoSchema = new EntitySchema({
     },
     descripcion: {
       type: "varchar",
-      length: 1500,
+      length: 1000,
       nullable: false,
     },
-    categoria: {
+    categoria: { // Urgente, General, Recordatorio
       type: "varchar",
       length: 13,
       nullable: false,
@@ -25,17 +25,7 @@ const AvisoSchema = new EntitySchema({
       type: "date",
       nullable: false,
     },
-    createdAt: {
-      type: "timestamp with time zone",
-      default: () => "CURRENT_TIMESTAMP",
-      nullable: false,
-    },
-    updatedAt: {
-      type: "timestamp with time zone",
-      default: () => "CURRENT_TIMESTAMP",
-      onUpdate: "CURRENT_TIMESTAMP",
-      nullable: false,
-    },
+   
   },
 });
 

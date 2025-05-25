@@ -1,14 +1,14 @@
 "use strict";
-import {
-    
-}from"../services/aviso.service.js";
+import{
+    crearAvisoService,
+}from "../services/aviso.service.js";
 import {
     handleErrorClient,
     handleErrorServer,
     handleSuccess,
 }from "../handlers/responseHandlers.js";
 
-export async function crearAviso(req, res){
+export async function crearAvisoController(req, res){
     try{
         const {descripcion, categoria, fecha} = req.body;
         if (!descripcion || !categoria || !fecha) {
