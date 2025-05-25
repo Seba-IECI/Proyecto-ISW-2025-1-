@@ -21,7 +21,6 @@ export async function crearAvisoController(req, res){
     } catch (error) {
         handleErrorServer(res, 500, error.message);
     }
-
 }
 
 
