@@ -13,6 +13,6 @@ router
     .use("/user", userRoutes)
     .use("/aviso", avisoRoutes)
     .use("/asamblea", asambleaRoutes)
-    ;
+    .use("/email", emailRoutes);
 
 export default router;
