@@ -38,7 +38,7 @@ export async function getAsambleaService(){
 export async function updateAsambleaService(query,body){
     try {
         const { id } = query;
-        const { tema, lugar, fecha } = body;
+        const { tema, ...restBody } = body;  
         const asambleaRepository = AppDataSource.getRepository(Asamblea);
 
         const asambleaFound = await asambleaRepository.findOne({
@@ -47,7 +47,7 @@ export async function updateAsambleaService(query,body){
 
         if (!asambleaFound) return [null, "No se encontró la asamblea"];
 
-        await asambleaRepository.update(id, body);
+        await asambleaRepository.update(id, restBody);
         return [await asambleaRepository.findOne({where: { id: id}}), null];
     } catch (error) {
         console.error("Error al actualizar la asamblea", error);
