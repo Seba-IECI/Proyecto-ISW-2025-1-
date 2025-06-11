@@ -11,7 +11,7 @@ import {
     handleErrorServer,
     handleSuccess,
 } from "../handlers/responseHandlers.js";
-import { asambleaQueryValidation } from "../validations/asamblea.validation.js";
+import { asambleaQueryValidation, asambleaUpdateValidation } from "../validations/asamblea.validation.js";
 
 export async function crearAsamblea(req, res) {
     try {
@@ -44,12 +44,20 @@ export async function getAsamblea(req, res) {
     }
 }
 
+
+
 export async function updateAsamblea(req, res) {
     try {
         const { id } = req.params;
         const { body } = req;
 
-        const [asamblea, errorAsamblea] = await updateAsambleaService({ id }, body);
+        
+        const { error, value } = asambleaUpdateValidation.validate(body);
+        if (error) {
+            return handleErrorClient(res, 400, error.details[0].message);
+        }
+
+        const [asamblea, errorAsamblea] = await updateAsambleaService({ id }, value);
 
         if (errorAsamblea) return handleErrorClient(res, 404, errorAsamblea);
 
