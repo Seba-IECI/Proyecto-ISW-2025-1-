@@ -7,6 +7,12 @@ export async function crearAsambleaService(query){
         const {tema,lugar,fecha}= query;
         const asambleaRepository = AppDataSource.getRepository(Asamblea);
 
+        
+        const asambleaExistente = await asambleaRepository.findOne({ where: { fecha } });
+        if (asambleaExistente) {
+            return [null, "Ya existe una asamblea para la fecha indicada"];
+        }
+
         const nuevaAsamblea = asambleaRepository.create({
             tema,
             lugar,
