@@ -24,6 +24,12 @@ const AsambleaSchema = new EntitySchema({
             type: "date",
             nullable: false,
         },
+        estado: {
+            type: "varchar",
+            length: 20,
+            nullable: false,
+            default: "pendiente"
+        },
         createdAt:{
           type: "timestamp with time zone",
           default: () => "CURRENT_TIMESTAMP",

@@ -1,7 +1,9 @@
+
 "use strict";
 import {
     crearAsambleaService,
     getAsambleaService,
+    getAsambleaByIdService,
     updateAsambleaService,
     deleteAsambleaService,
 } from "../services/asamblea.service.js";
@@ -9,17 +11,19 @@ import {
     handleErrorClient,
     handleErrorServer,
     handleSuccess,
-}from "../handlers/responseHandlers.js";
+} from "../handlers/responseHandlers.js";
+import { asambleaQueryValidation, asambleaUpdateValidation } from "../validations/asamblea.validation.js";
 
 export async function crearAsamblea(req, res) {
     try {
-        const { tema, lugar, fecha } = req.body;
-
-        if (!tema || !lugar || !fecha) {
-            return handleErrorClient(res, 400, "Faltan campos obligatorios: tema, lugar o fecha");
+        const { error, value } = asambleaQueryValidation.validate(req.body);
+        if (error) {
+            return handleErrorClient(res, 400, error.details[0].message);
         }
 
-        const [asamblea, errorAsamblea] = await crearAsambleaService({tema, lugar, fecha});
+        const { tema, lugar, fecha } = value;
+
+        const [asamblea, errorAsamblea] = await crearAsambleaService({ tema, lugar, fecha });
 
         if (errorAsamblea) return handleErrorClient(res, 404, errorAsamblea);
 
@@ -29,7 +33,7 @@ export async function crearAsamblea(req, res) {
     }
 }
 
-export async function getAsamblea(req, res){
+export async function getAsamblea(req, res) {
     try {
         const [asamblea, errorAsamblea] = await getAsambleaService();
 
@@ -41,12 +45,20 @@ export async function getAsamblea(req, res){
     }
 }
 
-export async function updateAsamblea(req, res){
+
+
+export async function updateAsamblea(req, res) {
     try {
         const { id } = req.params;
         const { body } = req;
 
-        const [asamblea, errorAsamblea] = await updateAsambleaService({id}, body);
+        
+        const { error, value } = asambleaUpdateValidation.validate(body);
+        if (error) {
+            return handleErrorClient(res, 400, error.details[0].message);
+        }
+
+        const [asamblea, errorAsamblea] = await updateAsambleaService({ id }, value);
 
         if (errorAsamblea) return handleErrorClient(res, 404, errorAsamblea);
 
@@ -56,16 +68,30 @@ export async function updateAsamblea(req, res){
     }
 }
 
-export async function deleteAsamblea(req, res){
+export async function deleteAsamblea(req, res) {
     try {
         const { id } = req.params;
 
-        const [asamblea, errorAsamblea] = await deleteAsambleaService({id});
+        const [asamblea, errorAsamblea] = await deleteAsambleaService({ id });
 
         if (errorAsamblea) return handleErrorClient(res, 404, errorAsamblea);
 
         handleSuccess(res, 200, "Asamblea eliminada", asamblea);
     } catch (error) {
         handleErrorClient(res, 500, error.message);
+    }
+}
+
+export async function getAsambleaById(req, res) {
+    try {
+        const { id } = req.params;
+
+        const [asamblea, errorAsamblea] = await getAsambleaByIdService(id);
+
+        if (errorAsamblea) return handleErrorClient(res, 404, errorAsamblea);
+
+        handleSuccess(res, 200, "Asamblea encontrada", asamblea);
+    } catch (error) {
+        handleErrorServer(res, 500, error.message);
     }
 }
