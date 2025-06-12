@@ -47,9 +47,7 @@ export const asambleaUpdateValidation = Joi.object({
     }),
     fecha: Joi.date()
     .required()
-    .min("now")
     .messages({
-        "data.empty": "La fecha es obligatoria",
-        "date.min": "La fecha debe ser una fecha futura"
+        "data.empty": "La fecha es obligatoria"
     })
 });
