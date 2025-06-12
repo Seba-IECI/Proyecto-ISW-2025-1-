@@ -5,6 +5,7 @@ import { authenticateJwt } from "../middlewares/authentication.middleware.js";
 import {
     crearAsamblea,
     getAsamblea,
+    getAsambleaById,
     updateAsamblea,
     deleteAsamblea,
 }from "../controllers/asamblea.controller.js";
@@ -17,6 +18,7 @@ router
 router
     .post("/crearAsamblea",isAdminOrDirectiva,crearAsamblea)
     .get("/getAsamblea", getAsamblea)
+    .get("/getAsamblea/:id", getAsambleaById)
     .patch("/updateAsamblea/:id",isAdminOrDirectiva, updateAsamblea)
     .delete("/deleteAsamblea/:id",isAdminOrDirectiva, deleteAsamblea);
 

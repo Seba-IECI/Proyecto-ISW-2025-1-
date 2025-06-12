@@ -41,6 +41,18 @@ export async function getAsambleaService(){
     }
 }
 
+export async function getAsambleaByIdService(id){
+    try {
+        const asamblea = await AppDataSource.getRepository(Asamblea).findOne({ where: { id } });
+
+        if(!asamblea) return [null, "No se encontró la asamblea"];
+        return [asamblea, null];
+    } catch (error) {
+        console.error("Error al obtener la asamblea por id:", error);
+        return [null, "Error interno en el servidor"];
+    }
+}
+
 export async function updateAsambleaService(query,body){
     try {
         const { id } = query;
