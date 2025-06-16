@@ -1,4 +1,3 @@
-
 "use strict";
 import {
     crearAsambleaService,
@@ -22,8 +21,9 @@ export async function crearAsamblea(req, res) {
         }
 
         const { tema, lugar, fecha } = value;
+        const creador = req.user?.nombreCompleto ;
 
-        const [asamblea, errorAsamblea] = await crearAsambleaService({ tema, lugar, fecha });
+        const [asamblea, errorAsamblea] = await crearAsambleaService({ tema, lugar, fecha, creador });
 
         if (errorAsamblea) return handleErrorClient(res, 404, errorAsamblea);
 

@@ -4,10 +4,9 @@ import { AppDataSource } from "../config/configDb.js";
 
 export async function crearAsambleaService(query){
     try {
-        const {tema,lugar,fecha}= query;
+        const {tema, lugar, fecha, creador} = query;
         const asambleaRepository = AppDataSource.getRepository(Asamblea);
 
-        
         const asambleaExistente = await asambleaRepository.findOne({ where: { fecha } });
         if (asambleaExistente) {
             return [null, "Ya existe una asamblea para la fecha indicada"];
@@ -17,6 +16,7 @@ export async function crearAsambleaService(query){
             tema,
             lugar,
             fecha,
+            creador,
             createdAt: new Date(),
         });
 
