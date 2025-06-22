@@ -3,14 +3,18 @@ import {
     crearAvisoService,
     obtenerAvisosService,
     modificarAvisoService,
-    eliminarAvisoService
+    eliminarAvisoService,
+    obtenerEmailsResidentes
 } from "../services/aviso.service.js";
 import {
     handleErrorClient,
     handleErrorServer,
     handleSuccess
 } from "../handlers/responseHandlers.js";
+import { avisoValidation } from "../validations/aviso.validations.js";
+import { sendEmail } from "../services/email.service.js";
 
+/*
 export async function crearAvisoController(req, res) {
     try {
         const { descripcion, categoria, fecha } = req.body;
@@ -29,8 +33,50 @@ export async function crearAvisoController(req, res) {
         return handleErrorServer(res, 500, error.message);
     }
 }
+    */
 
-export async function obtenerAvisosController(req, res){
+
+export async function crearAvisoController(req, res) {
+    try {
+        const { file } = req;
+        const data = { ...req.body };
+        if (file) {
+            data.archivoAdjunto = file.filename;
+        }
+        // Validación
+        const { error } = avisoValidation.validate(data);
+        if (error) {
+            return handleErrorClient(res, 400, error.message);
+        }
+        // Crear aviso
+        const [aviso, errorAviso] = await crearAvisoService(data);
+        if (errorAviso) {
+            return handleErrorClient(res, 400, errorAviso);
+        }
+        // Notificación por email
+        let destinatarios = [];
+        if (data.destinatario) {
+            destinatarios = [data.destinatario];
+        } else {
+            
+            destinatarios = await obtenerEmailsResidentes();
+        }
+        for (const email of destinatarios) {
+            await sendEmail(
+                email,
+                `Nuevo aviso: ${data.categoria}`,
+                data.descripcion,
+                `<p>${data.descripcion}</p>${file ? `<a href="${process.env.HOST}/uploads/avisos/${file.filename}">Descargar adjunto</a>` : ""}`
+            );
+        }
+        return handleSuccess(res, 201, "Aviso creado exitosamente", aviso);
+    } catch (error) {
+        return handleErrorServer(res, 500, error.message);
+    }
+}
+
+
+export async function obtenerAvisosController(res){
     try {
         const [aviso, errorAviso] = await obtenerAvisosService();
 

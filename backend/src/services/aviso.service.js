@@ -1,26 +1,32 @@
 "use strict";
 import Aviso from "../entity/aviso.entity.js";
 import { AppDataSource } from "../config/configDb.js";
+import UserSchema from "../entity/user.entity.js";
 
-export async function crearAvisoService(query){
+export async function crearAvisoService(data){
     try {
-        const {descripcion,categoria,fecha}= query;
         const avisoRepository = AppDataSource.getRepository(Aviso);
-
         const nuevoAviso = avisoRepository.create({
-            descripcion,
-            categoria,
-            fecha,
+            descripcion: data.descripcion,
+            categoria: data.categoria,
+            fecha: data.fecha,
+            fechaExpiracion: data.fechaExpiracion,
+            destinatario: data.destinatario || null,
+            archivoAdjunto: data.archivoAdjunto || null,
             createdAt: new Date(),
         });
-
         await avisoRepository.save(nuevoAviso);
         return [nuevoAviso, null];
-
-    } catch (error) {
-        console.error("Error al crear el aviso", error);
-        return [null, "Error interno del servidor"];
+    }catch (error) {
+        console.error("Error al obtener avisos:", error);
+        return [null, "Error interno en el servidor"];
     }
+}
+
+export async function obtenerEmailsResidentes() {
+    const userRepository = AppDataSource.getRepository(UserSchema);
+    const users = await userRepository.find({ where: [{ rol: "usuario" }, { rol: "directiva" }] });
+    return users.map(u => u.email);
 }
 
 export async function obtenerAvisosService(){
