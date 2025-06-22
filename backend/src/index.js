@@ -37,6 +37,8 @@ async function setupServer() {
       }),
     );
 
+    app.use("/uploads/avisos", express.static("uploads/avisos"));
+
     app.use(cookieParser());
 
     app.use(morgan("dev"));

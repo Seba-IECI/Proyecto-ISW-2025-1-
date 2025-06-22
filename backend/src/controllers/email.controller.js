@@ -5,7 +5,15 @@ import {
 }from "../handlers/responseHandlers.js";
 
 export const sendCustomEmail = async (req, res) => {
-    const { email, subject, message } = req.body;
+    let { email, subject, message } = req.body;
+
+    
+    if (Array.isArray(email)) {
+        email = email.join(','); 
+    } else if (typeof email !== 'string') {
+        return res.status(400).json({ message: 'El campo email debe ser un string o un array de strings' });
+    }
+
     try {
         const info = await sendEmail(
             email,

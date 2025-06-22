@@ -7,6 +7,12 @@ export async function crearAsambleaService(query){
         const {tema,lugar,fecha}= query;
         const asambleaRepository = AppDataSource.getRepository(Asamblea);
 
+        
+        const asambleaExistente = await asambleaRepository.findOne({ where: { fecha } });
+        if (asambleaExistente) {
+            return [null, "Ya existe una asamblea para la fecha indicada"];
+        }
+
         const nuevaAsamblea = asambleaRepository.create({
             tema,
             lugar,
@@ -35,10 +41,22 @@ export async function getAsambleaService(){
     }
 }
 
+export async function getAsambleaByIdService(id){
+    try {
+        const asamblea = await AppDataSource.getRepository(Asamblea).findOne({ where: { id } });
+
+        if(!asamblea) return [null, "No se encontró la asamblea"];
+        return [asamblea, null];
+    } catch (error) {
+        console.error("Error al obtener la asamblea por id:", error);
+        return [null, "Error interno en el servidor"];
+    }
+}
+
 export async function updateAsambleaService(query,body){
     try {
         const { id } = query;
-        const { tema, lugar, fecha } = body;
+        const { tema, ...restBody } = body;  
         const asambleaRepository = AppDataSource.getRepository(Asamblea);
 
         const asambleaFound = await asambleaRepository.findOne({
@@ -47,7 +65,7 @@ export async function updateAsambleaService(query,body){
 
         if (!asambleaFound) return [null, "No se encontró la asamblea"];
 
-        await asambleaRepository.update(id, body);
+        await asambleaRepository.update(id, restBody);
         return [await asambleaRepository.findOne({where: { id: id}}), null];
     } catch (error) {
         console.error("Error al actualizar la asamblea", error);
