@@ -76,7 +76,7 @@ export async function crearAvisoController(req, res) {
 }
 
 
-export async function obtenerAvisosController(res){
+export async function obtenerAvisosController(req, res){
     try {
         const [aviso, errorAviso] = await obtenerAvisosService();
 
