@@ -62,6 +62,7 @@ async function setupServer() {
     passportJwtSetup();
 
     app.use("/api", indexRoutes);
+    app.use("/api/src/upload", express.static("src/upload"));
 
     app.listen(PORT, () => {
       console.log(`=> Servidor corriendo en ${HOST}:${PORT}/api`);
