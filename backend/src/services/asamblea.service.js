@@ -31,7 +31,22 @@ export async function crearAsambleaService(query){
 
 export async function getAsambleaService(){
     try {
-        const asamblea = await AppDataSource.getRepository(Asamblea).find();
+        const asambleaRepository = AppDataSource.getRepository(Asamblea);
+        const fechaActual = new Date().toISOString().split('T')[0];
+        
+        
+        await asambleaRepository
+            .createQueryBuilder()
+            .update(Asamblea)
+            .set({ estado: "no realizada" })
+            .where("estado = :estado AND fecha < :fechaActual", { 
+                estado: "pendiente", 
+                fechaActual: fechaActual 
+            })
+            .execute();
+        
+        
+        const asamblea = await asambleaRepository.find();
 
         if(asamblea.length === 0) return [null, "No hay asambleas registradas"];
         return [asamblea, null];
