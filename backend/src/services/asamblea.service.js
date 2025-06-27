@@ -56,7 +56,7 @@ export async function getAsambleaByIdService(id){
 export async function updateAsambleaService(query,body){
     try {
         const { id } = query;
-        const { tema, ...restBody } = body;  
+        const { tema, fecha, ...restBody } = body;  
         const asambleaRepository = AppDataSource.getRepository(Asamblea);
 
         const asambleaFound = await asambleaRepository.findOne({
@@ -65,7 +65,38 @@ export async function updateAsambleaService(query,body){
 
         if (!asambleaFound) return [null, "No se encontró la asamblea"];
 
-        await asambleaRepository.update(id, restBody);
+        
+        let fechaFinal = fecha;
+        if (fecha) {
+            let fechaDisponible = new Date(fecha);
+            let intentos = 0;
+            const maxIntentos = 365; 
+            
+            while (intentos < maxIntentos) {
+                const asambleaConFecha = await asambleaRepository.findOne({ 
+                    where: { fecha: fechaDisponible.toISOString().split('T')[0] } 
+                });
+                
+                
+                if (!asambleaConFecha || asambleaConFecha.id === parseInt(id)) {
+                    fechaFinal = fechaDisponible.toISOString().split('T')[0];
+                    break;
+                }
+                
+                
+                fechaDisponible.setDate(fechaDisponible.getDate() + 1);
+                intentos++;
+            }
+            
+            if (intentos >= maxIntentos) {
+                return [null, "No se pudo encontrar una fecha disponible"];
+            }
+        }
+
+        
+        const updateData = fechaFinal ? { fecha: fechaFinal, ...restBody } : restBody;
+        
+        await asambleaRepository.update(id, updateData);
         return [await asambleaRepository.findOne({where: { id: id}}), null];
     } catch (error) {
         console.error("Error al actualizar la asamblea", error);
