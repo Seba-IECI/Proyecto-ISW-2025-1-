@@ -1,6 +1,6 @@
 import path from "path";
 import { HOST, PORT } from "../config/configEnv.js";
-import { getActasService, subidaActaService } from "../services/acta.service.js";
+import { getActasService, subidaActaService, actualizarActaService, eliminarActaService } from "../services/acta.service.js";
 import {
   handleErrorClient,
   handleErrorServer,
@@ -42,5 +42,60 @@ export async function getActas(req, res) {
       : handleSuccess(res, 200, "Actas encontradas", actas);
   } catch (error) {
     handleErrorServer(res, 500, "Error obteniendo actas", error.message);
+  }
+}
+
+export async function actualizarActa(req, res) {
+  try {
+    const { id } = req.params;
+    const { nombre } = req.body;
+    let actaPath = req.file?.path;
+
+   
+    if (!id || isNaN(parseInt(id))) {
+      return handleErrorClient(res, 400, "ID de acta inválido");
+    }
+
+    
+    const actaData = {};
+    if (nombre) actaData.nombre = nombre;
+    
+    
+    if (actaPath) {
+      const baseUrl = `http://${HOST}:${PORT}/api/uploads/actas/`;
+      actaData.actaPath = baseUrl + path.basename(actaPath);
+    }
+
+    
+    if (Object.keys(actaData).length === 0) {
+      return handleErrorClient(res, 400, "No se proporcionaron datos para actualizar");
+    }
+
+    const [actaActualizada, error] = await actualizarActaService(parseInt(id), actaData);
+
+    if (error) return handleErrorClient(res, 404, error);
+
+    handleSuccess(res, 200, "Acta actualizada exitosamente", actaActualizada);
+  } catch (error) {
+    handleErrorServer(res, 500, "Error actualizando acta", error.message);
+  }
+}
+
+export async function eliminarActa(req, res) {
+  try {
+    const { id } = req.params;
+
+    
+    if (!id || isNaN(parseInt(id))) {
+      return handleErrorClient(res, 400, "ID de acta inválido");
+    }
+
+    const [actaEliminada, error] = await eliminarActaService(parseInt(id));
+
+    if (error) return handleErrorClient(res, 404, error);
+
+    handleSuccess(res, 200, "Acta eliminada exitosamente", actaEliminada);
+  } catch (error) {
+    handleErrorServer(res, 500, "Error eliminando acta", error.message);
   }
 }

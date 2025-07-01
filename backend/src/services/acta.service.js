@@ -39,3 +39,56 @@ export async function getActasService() {
     return [null, "Error interno del servidor"];
   }
 }
+
+export async function actualizarActaService(id, actaData) {
+  try {
+    
+    const actaRepository = AppDataSource.getRepository(Acta);
+    
+    
+    const actaExistente = await actaRepository.findOne({ where: { id } });
+    
+    if (!actaExistente) {
+      return [null, "Acta no encontrada"];
+    }
+
+    
+    const { nombre, actaPath } = actaData;
+    
+    
+    if (nombre) actaExistente.nombre = nombre;
+    if (actaPath) actaExistente.archivo = actaPath;
+
+    
+    const actaActualizada = await actaRepository.save(actaExistente);
+    
+    
+    return [actaActualizada, null];
+  } catch (error) {
+    console.error("Error al actualizar acta:", error);
+    return [null, "Error interno del servidor"];
+  }
+}
+
+export async function eliminarActaService(id) {
+  try {
+    
+    const actaRepository = AppDataSource.getRepository(Acta);
+    
+    
+    const actaExistente = await actaRepository.findOne({ where: { id } });
+    
+    if (!actaExistente) {
+      return [null, "Acta no encontrada"];
+    }
+
+    
+    await actaRepository.remove(actaExistente);
+    
+    
+    return [actaExistente, null];
+  } catch (error) {
+    console.error("Error al eliminar acta:", error);
+    return [null, "Error interno del servidor"];
+  }
+}
