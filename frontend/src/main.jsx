@@ -9,6 +9,7 @@ import Root from '@pages/Root';
 import ProtectedRoute from '@components/ProtectedRoute';
 import '@styles/styles.css';
 import Asamblea from '@pages/Asamblea';
+import Asambleas from '@pages/AsambleaU';
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,14 @@ const router = createBrowserRouter([
       element: (
         <ProtectedRoute allowedRoles={['administrador', 'directiva']}>
           <Asamblea />
+        </ProtectedRoute>
+      )
+    },
+      {
+      path: 'asambleaU',
+      element: (
+        <ProtectedRoute allowedRoles={['usuario']}>
+          <Asambleas />
         </ProtectedRoute>
       )
     }

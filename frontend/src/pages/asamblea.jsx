@@ -84,7 +84,7 @@ const Asamblea = () => {
                     </button>
                 </div>
 
-                {/* Lista de asambleas */}
+                
                 <div className="asambleas-list">
                     <h3>Asambleas Registradas</h3>
                     
@@ -155,7 +155,7 @@ const Asamblea = () => {
                 </div>
             </div>
 
-            {/* Popup Modal */}
+            
             {isPopupOpen && (
                 <div className="bg">
                     <div className="asamblea-popup">
