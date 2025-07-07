@@ -18,14 +18,14 @@ router
     .use(authenticateJwt);
 
 router
-    .post("/crearAviso", isAdmin, uploadAviso.single("archivoAdjunto"), crearAvisoController)
-    .post("/crearAviso", isDirectiva, uploadAviso.single("archivoAdjunto"), crearAvisoController)
-    .get("/obtenerAvisos", isAdmin, obtenerAvisosController)
-    .get("/obtenerAvisos", isDirectiva, obtenerAvisosController)
-    .patch("/modificarAviso/:id", isAdmin, modificarAvisoController)
-    .patch("/modificarAviso/:id", isDirectiva, modificarAvisoController)
-    .delete("/eliminarAviso/:id", isAdmin, eliminarAvisoController)
-    .delete("/eliminarAviso/:id", isDirectiva, eliminarAvisoController);
+    .post("/crearAviso",authenticateJwt, isAdmin, uploadAviso.single("archivoAdjunto"), crearAvisoController)
+    .post("/crearAviso", authenticateJwt, isDirectiva, uploadAviso.single("archivoAdjunto"), crearAvisoController)
+    .get("/obtenerAvisos", authenticateJwt, isAdmin, obtenerAvisosController)
+    .get("/obtenerAvisos", authenticateJwt, isDirectiva, obtenerAvisosController)
+    .patch("/modificarAviso/:id", authenticateJwt, isAdmin, modificarAvisoController)
+    .patch("/modificarAviso/:id", authenticateJwt, isDirectiva, modificarAvisoController)
+    .delete("/eliminarAviso/:id", authenticateJwt, isAdmin, eliminarAvisoController)
+    .delete("/eliminarAviso/:id", authenticateJwt, isDirectiva, eliminarAvisoController);
     
 
 export default router;
