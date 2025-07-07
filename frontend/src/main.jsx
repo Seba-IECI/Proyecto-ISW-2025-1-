@@ -10,6 +10,7 @@ import ProtectedRoute from '@components/ProtectedRoute';
 import '@styles/styles.css';
 import Asamblea from '@pages/Asamblea';
 import Asambleas from '@pages/AsambleaU';
+import AvisosPage from "./pages/AvisosPage";
 
 const router = createBrowserRouter([
   {
@@ -45,6 +46,11 @@ const router = createBrowserRouter([
         </ProtectedRoute>
       )
     }
+      },
+      {
+        path: '/avisos',
+        element: <AvisosPage />
+      }
     ]
   },
   {
