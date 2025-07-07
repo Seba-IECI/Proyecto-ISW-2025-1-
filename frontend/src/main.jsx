@@ -25,27 +25,26 @@ const router = createBrowserRouter([
       {
         path: '/users',
         element: (
-        <ProtectedRoute allowedRoles={['administrador']}>
-          <Users />
-        </ProtectedRoute>
-        ),
-    },
-    {
-      path: 'asamblea',
-      element: (
-        <ProtectedRoute allowedRoles={['administrador', 'directiva']}>
-          <Asamblea />
-        </ProtectedRoute>
-      )
-    },
+          <ProtectedRoute allowedRoles={['administrador']}>
+            <Users />
+          </ProtectedRoute>
+        )
+      },
       {
-      path: 'asambleaU',
-      element: (
-        <ProtectedRoute allowedRoles={['usuario']}>
-          <Asambleas />
-        </ProtectedRoute>
-      )
-    }
+        path: '/asamblea',
+        element: (
+          <ProtectedRoute allowedRoles={['administrador', 'directiva']}>
+            <Asamblea />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: '/asambleaU',
+        element: (
+          <ProtectedRoute allowedRoles={['usuario']}>
+            <Asambleas />
+          </ProtectedRoute>
+        )
       },
       {
         path: '/avisos',
