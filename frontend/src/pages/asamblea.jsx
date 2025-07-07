@@ -31,7 +31,7 @@ const Asamblea = () => {
     // Llenar formulario cuando se edita
     useEffect(() => {
         if (isEditMode && currentAsamblea) {
-            setValue('tema', currentAsamblea.tema);
+            // NO se permite editar el tema en modo edición
             setValue('lugar', currentAsamblea.lugar);
             // Formatear fecha para input datetime-local
             const date = new Date(currentAsamblea.fecha);
@@ -44,7 +44,9 @@ const Asamblea = () => {
         setIsSubmitting(true);
         try {
             if (isEditMode) {
-                await handleUpdate(data);
+                // En modo edición, no se envía el tema
+                const { tema, ...updateData } = data;
+                await handleUpdate(updateData);
             } else {
                 await handleCreate(data);
             }
@@ -178,22 +180,29 @@ const Asamblea = () => {
                                     type="text"
                                     placeholder="Tema de la asamblea"
                                     className={errors.tema ? 'field-error' : ''}
+                                    disabled={isEditMode}
                                     {...register('tema', {
-                                        required: 'El tema es obligatorio',
-                                        minLength: {
+                                        required: isEditMode ? false : 'El tema es obligatorio',
+                                        minLength: isEditMode ? undefined : {
                                             value: 3,
                                             message: 'Mínimo 3 caracteres'
                                         },
-                                        maxLength: {
+                                        maxLength: isEditMode ? undefined : {
                                             value: 90,
                                             message: 'Máximo 90 caracteres'
                                         },
-                                        pattern: {
+                                        pattern: isEditMode ? undefined : {
                                             value: /^[a-zA-Z0-9\s]+$/,
                                             message: 'Solo letras, números y espacios'
                                         }
                                     })}
+                                    value={isEditMode ? currentAsamblea?.tema : undefined}
                                 />
+                                {isEditMode && (
+                                    <small className="info-message">
+                                        El tema no puede ser modificado una vez creada la asamblea
+                                    </small>
+                                )}
                                 {errors.tema && (
                                     <span className="error-message">{errors.tema.message}</span>
                                 )}

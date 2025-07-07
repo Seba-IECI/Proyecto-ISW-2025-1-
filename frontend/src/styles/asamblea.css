@@ -355,6 +355,23 @@
     border: 1px solid #f5c6cb;
 }
 
+/* Estilo para mensaje informativo */
+.info-message {
+    display: block;
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+    font-style: italic;
+}
+
+/* Estilo para campos deshabilitados */
+.asamblea-form input:disabled {
+    background-color: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
 
 @media (max-width: 768px) {
     .asamblea-container {
