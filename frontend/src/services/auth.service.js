@@ -16,6 +16,7 @@ export async function login(dataUser) {
             sessionStorage.setItem('usuario', JSON.stringify(userData));
             axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
             cookies.set('jwt-auth', data.data.token, {path:'/'});
+            sessionStorage.setItem('token', data.data.token);
             return response.data
         }
     } catch (error) {
