@@ -22,8 +22,8 @@ router
     .post("/crearAviso", authenticateJwt, isDirectiva, uploadAviso.single("archivoAdjunto"), crearAvisoController)
     .get("/obtenerAvisos", authenticateJwt, isAdmin, obtenerAvisosController)
     .get("/obtenerAvisos", authenticateJwt, isDirectiva, obtenerAvisosController)
-    .patch("/modificarAviso/:id", authenticateJwt, isAdmin, modificarAvisoController)
-    .patch("/modificarAviso/:id", authenticateJwt, isDirectiva, modificarAvisoController)
+    .patch("/modificarAviso/:id", authenticateJwt, isAdmin, uploadAviso.single("archivoAdjunto"), modificarAvisoController)
+    .patch("/modificarAviso/:id", authenticateJwt, isDirectiva,uploadAviso.single("archivoAdjunto"), modificarAvisoController)
     .delete("/eliminarAviso/:id", authenticateJwt, isAdmin, eliminarAvisoController)
     .delete("/eliminarAviso/:id", authenticateJwt, isDirectiva, eliminarAvisoController);
     
