@@ -33,12 +33,10 @@ function AvisosPage() {
   const [loadingForm, setLoading] = useState(false);
   const [errorForm, setError] = useState("");
 
-  // Cargar avisos
   useEffect(() => {
     fetchAvisos();
   }, []);
 
-  // Manejar cambios en el formulario
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (name === "archivoAdjunto") {
@@ -48,7 +46,6 @@ function AvisosPage() {
     }
   };
 
-  // Validar campos antes de enviar
   const validateForm = () => {
     if (!form.descripcion || !form.categoria || !form.fecha) {
       setError("Descripción, categoría y fecha son obligatorios");
@@ -78,7 +75,6 @@ function AvisosPage() {
     return true;
   };
 
-  // Crear o modificar aviso
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -114,7 +110,6 @@ function AvisosPage() {
     setLoading(false);
   };
 
-  // Editar aviso
   const handleEdit = (aviso) => {
     setEditId(aviso.id);
     setForm({
@@ -128,7 +123,6 @@ function AvisosPage() {
     window.scrollTo(0, 0);
   };
 
-  // Eliminar aviso
   const handleDeleteAviso = async (id) => {
     if (!window.confirm("¿Seguro que deseas eliminar este aviso?")) return;
     setLoading(true);
@@ -144,7 +138,7 @@ function AvisosPage() {
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>Gestión de Avisos</h2>
-      {(user?.rol === "admin" || user?.rol === "directiva") && (
+      {(user?.rol === "admin" || user?.rol === "directiva" || user?.rol === "administrador") && (
         <form className={styles.form} onSubmit={handleSubmit}>
           <h3>{editId ? "Editar Aviso" : "Crear Aviso"}</h3>
           {error && <div className={styles.error}>{error}</div>}
@@ -247,7 +241,7 @@ function AvisosPage() {
                 <th>Expira</th>
                 <th>Destinatario</th>
                 <th>Adjunto</th>
-                {(user?.rol === "admin" || user?.rol === "directiva") && (
+                {(user?.rol === "admin" || user?.rol === "directiva" || user?.rol === "administrador") && (
                   <th>Acciones</th>
                 )}
               </tr>
@@ -273,7 +267,7 @@ function AvisosPage() {
                       "-"
                     )}
                   </td>
-                  {(user?.rol === "admin" || user?.rol === "directiva") && (
+                  {(user?.rol === "admin" || user?.rol === "directiva" || user?.rol === "administrador") && (
                     <td>
                       <button
                         className={styles.actionBtn}

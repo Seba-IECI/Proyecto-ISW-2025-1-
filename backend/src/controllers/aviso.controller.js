@@ -14,26 +14,6 @@ import {
 import { avisoValidation } from "../validations/aviso.validations.js";
 import { sendEmail } from "../services/email.service.js";
 
-/*
-export async function crearAvisoController(req, res) {
-    try {
-        const { descripcion, categoria, fecha } = req.body;
-        if (!descripcion || !categoria || !fecha) {
-            return handleErrorClient(res, 400, "Faltan campos obligatorios: descripcion, categoria o fecha");
-        }
-        const [aviso, error] = await crearAvisoService(req.body);
-        
-        if (error) {
-            return handleErrorClient(res, 400, error);
-        }
-
-        return handleSuccess(res, 201, "Aviso creado exitosamente", aviso);
-        
-    } catch (error) {
-        return handleErrorServer(res, 500, error.message);
-    }
-}
-    */
 
 
 export async function crearAvisoController(req, res) {
@@ -43,17 +23,17 @@ export async function crearAvisoController(req, res) {
         if (file) {
             data.archivoAdjunto = file.filename;
         }
-        // Validación
+        
         const { error } = avisoValidation.validate(data);
         if (error) {
             return handleErrorClient(res, 400, error.message);
         }
-        // Crear aviso
+        
         const [aviso, errorAviso] = await crearAvisoService(data);
         if (errorAviso) {
             return handleErrorClient(res, 400, errorAviso);
         }
-        // Notificación por email
+        
         let destinatarios = [];
         if (data.destinatario) {
             destinatarios = [data.destinatario];
@@ -91,27 +71,51 @@ export async function obtenerAvisosController(req, res){
 export async function modificarAvisoController(req, res) {
     try {
         const { id } = req.params;
-         console.log("ID recibido en params:", id);
-        const { descripcion, categoria, fecha } = req.body;
+        const { descripcion, categoria, fecha, fechaExpiracion, destinatario } = req.body;
+        const { file } = req;
 
         if (!id) {
             return handleErrorClient(res, 400, "Falta el parámetro obligatorio: id");
         }
-        
-        if (!descripcion && !categoria && !fecha) {
-            return handleErrorClient(res, 400, "Debe proporcionar al menos un campo para actualizar: descripcion, categoria o fecha");
+
+        if (!descripcion && !categoria && !fecha && !fechaExpiracion && !file) {
+            return handleErrorClient(res, 400, "Debe proporcionar al menos un campo para actualizar: descripcion, categoria, fecha, fechaExpiracion o archivo adjunto");
         }
 
         const camposActualizar = {};
         if (descripcion !== undefined) camposActualizar.descripcion = descripcion;
         if (categoria !== undefined) camposActualizar.categoria = categoria;
         if (fecha !== undefined) camposActualizar.fecha = fecha;
+        if (fechaExpiracion !== undefined) camposActualizar.fechaExpiracion = fechaExpiracion;
+        if (destinatario !== undefined) camposActualizar.destinatario = destinatario;
+        if (file) camposActualizar.archivoAdjunto = file.filename;
+
+        const { error } = avisoValidation.validate({ ...camposActualizar });
+        if (error) {
+            return handleErrorClient(res, 400, error.message);
+        }
 
         const idNum = Number(id);
-        const [aviso, error] = await modificarAvisoService(idNum, camposActualizar);
+        const [aviso, errorAviso] = await modificarAvisoService(idNum, camposActualizar);
 
-        if (error) {
-            return handleErrorClient(res, 400, error);
+        if (errorAviso) {
+            return handleErrorClient(res, 400, errorAviso);
+        }
+
+        let destinatarios = [];
+        if (camposActualizar.destinatario) {
+            destinatarios = [camposActualizar.destinatario];
+        } else {
+            destinatarios = await obtenerEmailsResidentes();
+        }
+        for (const email of destinatarios) {
+            await sendEmail(
+                email,
+                `Aviso modificado: ${camposActualizar.categoria || aviso.categoria}`,
+                camposActualizar.descripcion || aviso.descripcion,
+                `<p>${camposActualizar.descripcion || aviso.descripcion}</p>` +
+                ((camposActualizar.archivoAdjunto || aviso.archivoAdjunto) ? `<a href="${process.env.HOST}/uploads/avisos/${camposActualizar.archivoAdjunto || aviso.archivoAdjunto}">Descargar adjunto</a>` : "")
+            );
         }
 
         return handleSuccess(res, 200, "Aviso modificado exitosamente", aviso);

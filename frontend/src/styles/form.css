@@ -188,7 +188,10 @@
 }
 
 input[type='email'] {
-	background-image: url('../assets/MentionIcon.svg');
+	background-image: url('../assets/EmailIcon.svg');
+	background-position: right 10px center;
+	background-repeat: no-repeat;
+	background-size: 25px 25px;
 }
 
 input[name='rut'] {
