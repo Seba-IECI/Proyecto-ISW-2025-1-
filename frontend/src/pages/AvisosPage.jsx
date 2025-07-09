@@ -89,7 +89,6 @@ function AvisosPage() {
       if (value) formData.append(key, value);
     });
 
-    setLoading(true);
     try {
       if (editId) {
         await handleUpdate(editId, formData);
