@@ -4,7 +4,7 @@ import { AppDataSource } from "../config/configDb.js";
 
 export async function crearAsambleaService(query){
     try {
-        const {tema, lugar, fecha, creador} = query;
+        const {tema, lugar, fecha, temasATratar, creador} = query;
         const asambleaRepository = AppDataSource.getRepository(Asamblea);
 
         const asambleaExistente = await asambleaRepository.findOne({ where: { fecha } });
@@ -16,6 +16,7 @@ export async function crearAsambleaService(query){
             tema,
             lugar,
             fecha,
+            temasATratar,
             creador,
             createdAt: new Date(),
         });
@@ -71,7 +72,7 @@ export async function getAsambleaByIdService(id){
 export async function updateAsambleaService(query,body){
     try {
         const { id } = query;
-        const { tema, fecha, ...restBody } = body;  
+        const { tema, fecha, temasATratar, ...restBody } = body;  
         const asambleaRepository = AppDataSource.getRepository(Asamblea);
 
         const asambleaFound = await asambleaRepository.findOne({
@@ -109,7 +110,7 @@ export async function updateAsambleaService(query,body){
         }
 
         
-        const updateData = fechaFinal ? { fecha: fechaFinal, ...restBody } : restBody;
+        const updateData = fechaFinal ? { fecha: fechaFinal, temasATratar, ...restBody } : { temasATratar, ...restBody };
         
         await asambleaRepository.update(id, updateData);
         return [await asambleaRepository.findOne({where: { id: id}}), null];

@@ -30,6 +30,13 @@ export const asambleaQueryValidation = Joi.object({
     .messages({
         "data.empty": "La fecha es obligatoria",
         "date.min": "La fecha debe ser una fecha futura"
+    }),
+    temasATratar: Joi.string()
+    .optional()
+    .allow('')
+    .max(1000)
+    .messages({
+        "string.max": "Los temas a tratar no pueden exceder los 1000 caracteres"
     })
 });
 
@@ -51,5 +58,12 @@ export const asambleaUpdateValidation = Joi.object({
     .messages({
         "data.empty": "La fecha es obligatoria",
         "date.min": "La fecha debe ser una fecha futura"
+    }),
+    temasATratar: Joi.string()
+    .optional()
+    .allow('')
+    .max(1000)
+    .messages({
+        "string.max": "Los temas a tratar no pueden exceder los 1000 caracteres"
     })
 });

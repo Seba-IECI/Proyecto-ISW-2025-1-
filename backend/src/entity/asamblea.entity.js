@@ -35,6 +35,10 @@ const AsambleaSchema = new EntitySchema({
             length: 255,
             nullable: false,
         },
+        temasATratar: {
+            type: "text",
+            nullable: true,
+        },
         createdAt:{
           type: "timestamp with time zone",
           default: () => "CURRENT_TIMESTAMP",

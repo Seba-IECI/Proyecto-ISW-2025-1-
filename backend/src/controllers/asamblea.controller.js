@@ -20,10 +20,10 @@ export async function crearAsamblea(req, res) {
             return handleErrorClient(res, 400, error.details[0].message);
         }
 
-        const { tema, lugar, fecha } = value;
+        const { tema, lugar, fecha, temasATratar } = value;
         const creador = req.user?.nombreCompleto ;
 
-        const [asamblea, errorAsamblea] = await crearAsambleaService({ tema, lugar, fecha, creador });
+        const [asamblea, errorAsamblea] = await crearAsambleaService({ tema, lugar, fecha, temasATratar, creador });
 
         if (errorAsamblea) return handleErrorClient(res, 404, errorAsamblea);
 
