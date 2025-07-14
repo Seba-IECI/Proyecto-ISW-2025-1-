@@ -47,12 +47,15 @@ const useAsamblea = () => {
                 showSuccessAlert("¡Éxito!", "Asamblea creada correctamente");
                 setIsPopupOpen(false);
                 fetchAsambleas(); // Recargar la lista
+                return { success: true };
             } else {
                 showErrorAlert("Error", response.message || "Error al crear la asamblea");
+                return { success: false, message: response.message };
             }
         } catch (error) {
             console.error("Error al crear la asamblea:", error);
             showErrorAlert("Error", "Error interno del servidor");
+            return { success: false, message: "Error interno del servidor" };
         }
     };
 
@@ -71,12 +74,15 @@ const useAsamblea = () => {
                 showSuccessAlert("¡Éxito!", "Asamblea actualizada correctamente");
                 setIsPopupOpen(false);
                 fetchAsambleas(); // Recargar la lista
+                return { success: true };
             } else {
                 showErrorAlert("Error", response.message || "Error al actualizar la asamblea");
+                return { success: false, message: response.message };
             }
         } catch (error) {
             console.error("Error al actualizar la asamblea:", error);
             showErrorAlert("Error", "Error interno del servidor");
+            return { success: false, message: "Error interno del servidor" };
         }
     };
 
