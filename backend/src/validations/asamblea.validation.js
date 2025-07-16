@@ -71,3 +71,13 @@ export const asambleaUpdateValidation = Joi.object({
         "string.pattern.base": "Los temas a tratar solo pueden contener letras, números, espacios, signos de puntuación, ñ y tildes"
     })
 });
+
+export const asambleaEstadoValidation = Joi.object({
+    estado: Joi.string()
+        .valid("pendiente", "realizada", "no realizada")
+        .required()
+        .messages({
+            "string.empty": "El estado es obligatorio",
+            "any.only": "El estado debe ser uno de los siguientes: pendiente, realizada, no realizada"
+        })
+});

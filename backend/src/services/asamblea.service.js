@@ -33,19 +33,8 @@ export async function crearAsambleaService(query){
 export async function getAsambleaService(){
     try {
         const asambleaRepository = AppDataSource.getRepository(Asamblea);
-        const fechaActual = new Date().toISOString().split('T')[0];
         
-        
-        await asambleaRepository
-            .createQueryBuilder()
-            .update(Asamblea)
-            .set({ estado: "no realizada" })
-            .where("estado = :estado AND fecha < :fechaActual", { 
-                estado: "pendiente", 
-                fechaActual: fechaActual 
-            })
-            .execute();
-        
+        await updateAsambleasVencidas();
         
         const asamblea = await asambleaRepository.find();
 
@@ -117,6 +106,98 @@ export async function deleteAsambleaService(query){
         return [asambleaFound, null];
     } catch (error) {
         console.error("Error al eliminar la asamblea", error);
+        return [null, "Error interno del servidor"];
+    }
+}
+
+export async function changeAsambleaEstadoService(asambleaId, nuevoEstado) {
+    try {
+        const asambleaRepository = AppDataSource.getRepository(Asamblea);
+        
+        
+        const asamblea = await asambleaRepository.findOne({
+            where: { id: asambleaId }
+        });
+        
+        if (!asamblea) {
+            return [null, "No se encontró la asamblea"];
+        }
+        
+        
+        const estadosValidos = ["pendiente", "realizada", "no realizada"];
+        if (!estadosValidos.includes(nuevoEstado)) {
+            return [null, "Estado inválido. Los estados válidos son: pendiente, realizada, no realizada"];
+        }
+        
+        
+        if (asamblea.estado !== "pendiente" && nuevoEstado === "realizada") {
+            return [null, "Solo se puede cambiar a 'realizada' desde estado 'pendiente'"];
+        }
+        
+        
+        const fechaActual = new Date();
+        const fechaAsamblea = new Date(asamblea.fecha);
+        fechaAsamblea.setHours(23, 59, 59, 999); 
+        
+        if (nuevoEstado === "realizada" && fechaActual > fechaAsamblea) {
+            return [null, "No se puede cambiar a 'realizada' después de la fecha programada"];
+        }
+        
+        
+        await asambleaRepository.update(asambleaId, { estado: nuevoEstado });
+        
+        const asambleaActualizada = await asambleaRepository.findOne({
+            where: { id: asambleaId }
+        });
+        
+        return [asambleaActualizada, null];
+        
+    } catch (error) {
+        console.error("Error al cambiar el estado de la asamblea:", error);
+        return [null, "Error interno del servidor"];
+    }
+}
+
+export async function updateAsambleasVencidas() {
+    try {
+        const asambleaRepository = AppDataSource.getRepository(Asamblea);
+        const fechaActual = new Date();
+        fechaActual.setHours(0, 0, 0, 0); 
+        
+        
+        const result = await asambleaRepository
+            .createQueryBuilder()
+            .update(Asamblea)
+            .set({ estado: "no realizada" })
+            .where("estado = :estado AND fecha < :fechaActual", { 
+                estado: "pendiente", 
+                fechaActual: fechaActual.toISOString().split('T')[0]
+            })
+            .execute();
+        
+        return [result.affected, null];
+        
+    } catch (error) {
+        console.error("Error al actualizar asambleas vencidas:", error);
+        return [null, "Error interno del servidor"];
+    }
+}
+
+
+export async function verificarEstadosAsambleas() {
+    try {
+        const [cantidadActualizada, error] = await updateAsambleasVencidas();
+        
+        if (error) {
+            console.error("Error al verificar estados de asambleas:", error);
+            return [null, error];
+        }
+        
+        console.log(`Se actualizaron ${cantidadActualizada} asambleas a estado 'no realizada'`);
+        return [cantidadActualizada, null];
+        
+    } catch (error) {
+        console.error("Error en verificación automática de estados:", error);
         return [null, "Error interno del servidor"];
     }
 }
