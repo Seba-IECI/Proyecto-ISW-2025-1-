@@ -106,7 +106,7 @@
     font-size: 0.9rem;
 }
 
-/* Popup específico para asamblea */
+
 .asamblea-popup {
     background: white;
     border-radius: 8px;
@@ -244,34 +244,72 @@
 .asambleas-table {
     width: 100%;
     border-collapse: collapse;
+    margin-top: 1rem;
     background: white;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .asambleas-table th,
 .asambleas-table td {
     padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid #e9ecef;
-    vertical-align: top;
+    border-bottom: 1px solid #dee2e6;
+    vertical-align: middle;
 }
 
 .asambleas-table th {
     background: #f8f9fa;
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
     font-weight: 600;
-    color: #333;
-    font-size: 0.9rem;
+    color: #495057;
 }
 
 .asambleas-table td {
-    color: #666;
-    font-size: 0.9rem;
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+    vertical-align: middle;
 }
 
 .asambleas-table tr:hover {
     background: #f8f9fa;
+}
+
+
+.asambleas-table th:nth-child(4),
+.asambleas-table td:nth-child(4) {
+    text-align: center;
+    width: 120px;
+}
+
+
+@media (max-width: 1200px) {
+    .asambleas-table {
+        font-size: 0.9rem;
+    }
+    
+    .asambleas-table th,
+    .asambleas-table td {
+        padding: 0.75rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .asambleas-table {
+        font-size: 0.8rem;
+    }
+    
+    .asambleas-table th,
+    .asambleas-table td {
+        padding: 0.5rem;
+    }
+    
+    .asambleas-table th:nth-child(4),
+    .asambleas-table td:nth-child(4) {
+        width: 100px;
+    }
 }
 
 .actions-cell {
@@ -337,7 +375,7 @@
     margin-bottom: 1.5rem;
 }
 
-/* Estilos para el badge de estado */
+
 .estado-badge {
     display: inline-block;
     padding: 0.25rem 0.75rem;
@@ -366,7 +404,7 @@
     border: 1px solid #f5c6cb;
 }
 
-/* Estilo para mensaje informativo */
+
 .info-message {
     display: block;
     font-size: 0.85rem;
@@ -375,7 +413,7 @@
     font-style: italic;
 }
 
-/* Estilo para campos deshabilitados */
+
 .asamblea-form input:disabled {
     background-color: #e9ecef;
     color: #6c757d;
@@ -437,7 +475,7 @@
     }
 }
 
-/* Estilos específicos para el campo temas a tratar */
+
 .temas-cell {
     max-width: 300px;
     min-width: 200px;
@@ -470,7 +508,7 @@
     min-height: 100px;
 }
 
-/* Responsive para la tabla con más columnas */
+
 @media (max-width: 1400px) {
     .asamblea-container {
         padding: 1.5rem;

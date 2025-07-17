@@ -1,0 +1,82 @@
+/* Estilos para el componente de estado de asamblea */
+.asamblea-estado-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.estado-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.btn-cambiar-estado {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.btn-cambiar-estado:hover {
+    background-color: #f8f9fa;
+    transform: scale(1.1);
+}
+
+.btn-cambiar-estado:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.btn-cambiar-estado:disabled:hover {
+    background-color: transparent;
+    transform: none;
+}
+
+/* Estilos para los estados específicos */
+.estado-badge.pendiente {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.estado-badge.realizada {
+    background-color: #28a745;
+    color: white;
+}
+
+.estado-badge.no-realizada {
+    background-color: #dc3545;
+    color: white;
+}
+
+
+@media (max-width: 768px) {
+    .asamblea-estado-container {
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .estado-badge {
+        font-size: 10px;
+        padding: 2px 8px;
+    }
+    
+    .btn-cambiar-estado {
+        width: 20px;
+        height: 20px;
+        font-size: 14px;
+    }
+}

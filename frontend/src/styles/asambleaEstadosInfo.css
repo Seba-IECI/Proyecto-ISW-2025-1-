@@ -1,0 +1,217 @@
+/* Estilos para la página de información de estados */
+.estados-info-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #f8f9fa;
+    min-height: 100vh;
+}
+
+.estados-info-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.estados-info-header h2 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.estados-info-header p {
+    font-size: 1.1rem;
+    color: #666;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.estados-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.estado-info-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e9ecef;
+    text-align: center;
+}
+
+.estado-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.estado-info-card h3 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.estado-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.estado-info-card p {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.estado-actions {
+    text-align: left;
+}
+
+.estado-actions h4 {
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.estado-actions ul {
+    list-style: none;
+    padding: 0;
+}
+
+.estado-actions li {
+    padding: 0.25rem 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.estados-flow {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 3rem;
+}
+
+.estados-flow h3 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+}
+
+.flow-diagram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+}
+
+.flow-step {
+    text-align: center;
+}
+
+.flow-state {
+    padding: 1rem 2rem;
+    border-radius: 25px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 0.5rem;
+    min-width: 120px;
+}
+
+.flow-state.pendiente {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.flow-state.realizada {
+    background-color: #28a745;
+}
+
+.flow-state.no-realizada {
+    background-color: #dc3545;
+}
+
+.flow-description {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.flow-arrow {
+    font-size: 1.5rem;
+    color: #666;
+    font-weight: bold;
+}
+
+.estados-rules {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.estados-rules h3 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+}
+
+.rules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.rule-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    border-left: 4px solid #007bff;
+}
+
+.rule-card h4 {
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.rule-card p {
+    color: #666;
+    line-height: 1.5;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+
+@media (max-width: 768px) {
+    .estados-info-container {
+        padding: 1rem;
+    }
+    
+    .estados-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .flow-diagram {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .flow-arrow {
+        transform: rotate(90deg);
+    }
+    
+    .rules-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .estado-info-card {
+        padding: 1.5rem;
+    }
+}

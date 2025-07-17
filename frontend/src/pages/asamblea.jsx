@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import useAsamblea from '@hooks/asamblea/useAsamblea';
+import AsambleaEstadoBadge from '@components/AsambleaEstadoBadge';
 import '@styles/asamblea.css';
 
 const Asamblea = () => {
@@ -16,7 +17,8 @@ const Asamblea = () => {
         handleClickEdit,
         handleUpdate,
         handleDelete,
-        formatDate
+        formatDate,
+        fetchAsambleas
     } = useAsamblea();
     
     const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm();
@@ -112,6 +114,7 @@ const Asamblea = () => {
                                     <th>Tema</th>
                                     <th>Lugar</th>
                                     <th>Fecha</th>
+                                    <th>Estado</th>
                                     <th>Temas a Tratar</th>
                                     <th>Creador</th>
                                     <th>Acciones</th>
@@ -123,6 +126,12 @@ const Asamblea = () => {
                                         <td>{asamblea.tema}</td>
                                         <td>{asamblea.lugar}</td>
                                         <td>{formatDate(asamblea.fecha)}</td>
+                                        <td>
+                                            <AsambleaEstadoBadge 
+                                                asamblea={asamblea} 
+                                                onEstadoChanged={fetchAsambleas}
+                                            />
+                                        </td>
                                         <td className="temas-cell">
                                             {asamblea.temasATratar ? (
                                                 <div className="temas-content">
@@ -173,7 +182,12 @@ const Asamblea = () => {
                         <p>Establece la fecha y hora de la asamblea.</p>
                     </div>
                     <div className="info-card">
-                        <div className="info-card-icon">📝</div>
+                        <div className="info-card-icon">�</div>
+                        <h3>Estado</h3>
+                        <p>Controla el estado: Pendiente, Realizada o No Realizada.</p>
+                    </div>
+                    <div className="info-card">
+                        <div className="info-card-icon">�📝</div>
                         <h3>Temas a Tratar</h3>
                         <p>Detalla los puntos específicos que se discutirán.</p>
                     </div>
