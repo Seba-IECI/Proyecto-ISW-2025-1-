@@ -68,7 +68,7 @@ const AsambleaU = () => {
                         <p>Aquí se muestran todas las asambleas registradas en el sistema.</p>
                     </div>
                     <div className="info-card">
-                        <div className="info-card-icon">�</div>
+                        <div className="info-card-icon">⚠️</div>
                         <h3>Estados</h3>
                         <p>Puedes ver el estado actual de cada asamblea: pendiente, creada o finalizada.</p>
                     </div>

@@ -30,15 +30,18 @@ const Asamblea = () => {
         }
     }, [isPopupOpen, reset]);
 
-    // Llenar formulario cuando se edita
+    
     useEffect(() => {
         if (isEditMode && currentAsamblea) {
-            // NO se permite editar el tema en modo edición
+            
             setValue('lugar', currentAsamblea.lugar);
             setValue('temasATratar', currentAsamblea.temasATratar || '');
-            // Formatear fecha para input datetime-local
+            
             const date = new Date(currentAsamblea.fecha);
-            const formattedDate = date.toISOString().slice(0, 16);
+            
+            const timeOffset = date.getTimezoneOffset() * 60000;
+            const localDate = new Date(date.getTime() - timeOffset);
+            const formattedDate = localDate.toISOString().slice(0, 16);
             setValue('fecha', formattedDate);
         }
     }, [isEditMode, currentAsamblea, setValue]);
@@ -182,12 +185,12 @@ const Asamblea = () => {
                         <p>Establece la fecha y hora de la asamblea.</p>
                     </div>
                     <div className="info-card">
-                        <div className="info-card-icon">�</div>
+                        <div className="info-card-icon">⚠️</div>
                         <h3>Estado</h3>
                         <p>Controla el estado: Pendiente, Realizada o No Realizada.</p>
                     </div>
                     <div className="info-card">
-                        <div className="info-card-icon">�📝</div>
+                        <div className="info-card-icon">📝</div>
                         <h3>Temas a Tratar</h3>
                         <p>Detalla los puntos específicos que se discutirán.</p>
                     </div>

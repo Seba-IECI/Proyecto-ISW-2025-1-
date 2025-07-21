@@ -21,7 +21,7 @@ const AsambleaSchema = new EntitySchema({
             nullable: false,
         },
         fecha:{
-            type: "date",
+            type: "timestamp",
             nullable: false,
         },
         estado: {

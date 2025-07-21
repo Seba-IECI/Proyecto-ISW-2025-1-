@@ -7,7 +7,20 @@ export async function crearAsambleaService(query){
         const {tema, lugar, fecha, temasATratar, creador} = query;
         const asambleaRepository = AppDataSource.getRepository(Asamblea);
 
-        const asambleaExistente = await asambleaRepository.findOne({ where: { fecha } });
+        // Verificar si ya existe una asamblea en la misma fecha (solo día, no hora exacta)
+        const fechaInicio = new Date(fecha);
+        fechaInicio.setHours(0, 0, 0, 0);
+        const fechaFin = new Date(fecha);
+        fechaFin.setHours(23, 59, 59, 999);
+
+        const asambleaExistente = await asambleaRepository
+            .createQueryBuilder("asamblea")
+            .where("asamblea.fecha >= :fechaInicio AND asamblea.fecha <= :fechaFin", {
+                fechaInicio,
+                fechaFin
+            })
+            .getOne();
+
         if (asambleaExistente) {
             return [null, "Ya existe una asamblea para la fecha indicada"];
         }
@@ -15,7 +28,7 @@ export async function crearAsambleaService(query){
         const nuevaAsamblea = asambleaRepository.create({
             tema,
             lugar,
-            fecha,
+            fecha: new Date(fecha), // Asegurar que se guarde como timestamp completo
             temasATratar,
             creador,
             createdAt: new Date(),
@@ -72,17 +85,28 @@ export async function updateAsambleaService(query,body){
 
         
         if (fecha) {
-            const asambleaConFecha = await asambleaRepository.findOne({ 
-                where: { fecha } 
-            });
+            // Verificar si ya existe una asamblea en la misma fecha (solo día, no hora exacta)
+            const fechaInicio = new Date(fecha);
+            fechaInicio.setHours(0, 0, 0, 0);
+            const fechaFin = new Date(fecha);
+            fechaFin.setHours(23, 59, 59, 999);
+
+            const asambleaConFecha = await asambleaRepository
+                .createQueryBuilder("asamblea")
+                .where("asamblea.fecha >= :fechaInicio AND asamblea.fecha <= :fechaFin", {
+                    fechaInicio,
+                    fechaFin
+                })
+                .andWhere("asamblea.id != :id", { id: parseInt(id) })
+                .getOne();
             
-            if (asambleaConFecha && asambleaConFecha.id !== parseInt(id)) {
+            if (asambleaConFecha) {
                 return [null, "Ya existe una asamblea para la fecha indicada"];
             }
         }
 
         
-        const updateData = fecha ? { fecha, temasATratar, ...restBody } : { temasATratar, ...restBody };
+        const updateData = fecha ? { fecha: new Date(fecha), temasATratar, ...restBody } : { temasATratar, ...restBody };
         
         await asambleaRepository.update(id, updateData);
         return [await asambleaRepository.findOne({where: { id: id}}), null];
@@ -162,7 +186,7 @@ export async function updateAsambleasVencidas() {
     try {
         const asambleaRepository = AppDataSource.getRepository(Asamblea);
         const fechaActual = new Date();
-        fechaActual.setHours(0, 0, 0, 0); 
+        fechaActual.setHours(23, 59, 59, 999); // Fin del día actual
         
         
         const result = await asambleaRepository
@@ -171,7 +195,7 @@ export async function updateAsambleasVencidas() {
             .set({ estado: "no realizada" })
             .where("estado = :estado AND fecha < :fechaActual", { 
                 estado: "pendiente", 
-                fechaActual: fechaActual.toISOString().split('T')[0]
+                fechaActual: fechaActual
             })
             .execute();
         
