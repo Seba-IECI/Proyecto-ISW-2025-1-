@@ -77,7 +77,7 @@ const Asamblea = () => {
                 const response = await fetchDelAsamblea(id);
                 if (response && response.status === "Success") {
                     showSuccessAlert("¡Eliminado!", "Asamblea eliminada correctamente");
-                    await fetchAsambleas(); // Recargar la lista
+                    await fetchAsambleas(); 
                 } else {
                     showErrorAlert("Error", response?.message || "Error al eliminar la asamblea");
                 }
@@ -115,16 +115,16 @@ const Asamblea = () => {
         try {
             let result;
             if (isEditMode) {
-                // Para actualizar, quitamos el tema del data ya que no se puede modificar
+                
                 const { tema, ...updateData } = data;
                 result = await handleUpdate(updateData);
             } else {
                 result = await handleCreate(data);
             }
             
-            // Si cualquier operación fue exitosa, actualizar la lista y limpiar formulario
+            
             if (result && result.success) {
-                await fetchAsambleas(); // Actualizar la lista de asambleas
+                await fetchAsambleas(); 
                 reset();
             }
         } catch (error) {
