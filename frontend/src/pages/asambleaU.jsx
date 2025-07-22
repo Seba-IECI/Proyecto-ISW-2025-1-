@@ -1,12 +1,23 @@
-import useAsamblea from '@hooks/asamblea/useAsamblea';
+import useGetAsamblea from '@hooks/asamblea/useGetAsamblea';
 import '@styles/asamblea.css';
 
 const AsambleaU = () => {
     const { 
-        asambleas,
-        loading,
-        formatDate
-    } = useAsamblea();
+        asamblea: asambleas,
+        loading
+    } = useGetAsamblea();
+
+    
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleString('es-ES', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    };
 
     return (
         <div className="asamblea-container">

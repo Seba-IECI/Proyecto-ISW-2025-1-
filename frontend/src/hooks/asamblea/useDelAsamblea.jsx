@@ -8,8 +8,10 @@ const useDelAsamblea = () => {
         try {
             const response = await deleteAsamblea(id);
             setAsamblea(response);
+            return response; 
         } catch (error) {
             console.error("Error al eliminar la asamblea:", error);
+            throw error; 
         }
     };
 

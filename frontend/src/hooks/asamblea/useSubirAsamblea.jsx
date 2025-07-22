@@ -26,14 +26,18 @@ const useSubirAsamblea = () => {
                         lugar: '',
                         fecha: ''
                     });
+                    return { success: true, response }; 
                 } else {
                     showErrorAlert("Error", response.message || "Error al crear la asamblea");
+                    return { success: false, message: response.message };
                 }
             } catch (error) {
                 console.error("Error al crear la asamblea:", error);
                 showErrorAlert("Error", "Error interno del servidor");
+                return { success: false, message: "Error interno del servidor" };
             }
         }
+        return { success: false, message: "No se proporcionaron datos" };
     };
 
     return{

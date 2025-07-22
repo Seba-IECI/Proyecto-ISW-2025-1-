@@ -8,8 +8,10 @@ const useUpAsamblea = () => {
         try {
             const response = await updateAsamblea(id, data);
             setAsamblea(response);
+            return response; 
         } catch (error) {
             console.error("Error al actualizar la asamblea:", error);
+            throw error; 
         }
     }
 

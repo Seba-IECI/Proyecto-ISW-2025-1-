@@ -1,28 +1,92 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import useAsamblea from '@hooks/asamblea/useAsamblea';
+import useSubirAsamblea from '@hooks/asamblea/useSubirAsamblea';
+import useGetAsamblea from '@hooks/asamblea/useGetAsamblea';
+import useUpAsamblea from '@hooks/asamblea/useUpAsamblea';
+import useDelAsamblea from '@hooks/asamblea/useDelAsamblea';
 import AsambleaEstadoBadge from '@components/AsambleaEstadoBadge';
+import { showErrorAlert, showSuccessAlert, deleteDataAlert } from '@helpers/sweetAlert';
 import '@styles/asamblea.css';
 
 const Asamblea = () => {
+    
     const { 
-        asambleas,
-        loading,
-        isPopupOpen,
-        setIsPopupOpen,
-        isEditMode,
-        currentAsamblea,
         handleClickCreate,
         handleCreate,
-        handleClickEdit,
-        handleUpdate,
-        handleDelete,
-        formatDate,
-        fetchAsambleas
-    } = useAsamblea();
+        isPopupOpen,
+        setIsPopupOpen
+    } = useSubirAsamblea();
+    
+    const { 
+        asamblea: asambleas,
+        loading,
+        fetchGetAsamblea: fetchAsambleas
+    } = useGetAsamblea();
+    
+    const { fetchUpAsamblea } = useUpAsamblea();
+    const { fetchDelAsamblea } = useDelAsamblea();
+    
+   
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [currentAsamblea, setCurrentAsamblea] = useState(null);
     
     const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm();
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleString('es-ES', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    };
+
+    const handleClickEdit = (asamblea) => {
+        setIsEditMode(true);
+        setCurrentAsamblea(asamblea);
+        setIsPopupOpen(true);
+    };
+
+    const handleUpdate = async (data) => {
+        try {
+            const response = await fetchUpAsamblea(data, currentAsamblea.id);
+            if (response && response.status === "Success") {
+                showSuccessAlert("¡Éxito!", "Asamblea actualizada correctamente");
+                setIsPopupOpen(false);
+                await fetchAsambleas(); 
+                return { success: true };
+            } else {
+                showErrorAlert("Error", response?.message || "Error al actualizar la asamblea");
+                return { success: false, message: response?.message };
+            }
+        } catch (error) {
+            console.error("Error al actualizar la asamblea:", error);
+            showErrorAlert("Error", "Error interno del servidor");
+            return { success: false, message: "Error interno del servidor" };
+        }
+    };
+
+    const handleDelete = async (id) => {
+        const result = await deleteDataAlert();
+        if (result.isConfirmed) {
+            try {
+                const response = await fetchDelAsamblea(id);
+                if (response && response.status === "Success") {
+                    showSuccessAlert("¡Eliminado!", "Asamblea eliminada correctamente");
+                    await fetchAsambleas(); // Recargar la lista
+                } else {
+                    showErrorAlert("Error", response?.message || "Error al eliminar la asamblea");
+                }
+            } catch (error) {
+                console.error("Error al eliminar la asamblea:", error);
+                showErrorAlert("Error", "Error interno del servidor");
+            }
+        }
+    };
 
     useEffect(() => {
         if (!isPopupOpen) {
@@ -51,15 +115,16 @@ const Asamblea = () => {
         try {
             let result;
             if (isEditMode) {
-                
+                // Para actualizar, quitamos el tema del data ya que no se puede modificar
                 const { tema, ...updateData } = data;
                 result = await handleUpdate(updateData);
             } else {
                 result = await handleCreate(data);
             }
             
-            
+            // Si cualquier operación fue exitosa, actualizar la lista y limpiar formulario
             if (result && result.success) {
+                await fetchAsambleas(); // Actualizar la lista de asambleas
                 reset();
             }
         } catch (error) {
@@ -71,6 +136,8 @@ const Asamblea = () => {
 
     const handleClosePopup = () => {
         setIsPopupOpen(false);
+        setIsEditMode(false);
+        setCurrentAsamblea(null);
         reset();
     };
 
