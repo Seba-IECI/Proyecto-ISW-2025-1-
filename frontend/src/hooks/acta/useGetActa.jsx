@@ -17,6 +17,7 @@ const useGetActa = () => {
                     id: acta.id,
                     nombre: acta.nombre,
                     archivo: acta.archivo,
+                    subidoPor: acta.subidoPor,
                     createdAt: acta.createdAt,
                     updatedAt: acta.updatedAt
                 })) || [];

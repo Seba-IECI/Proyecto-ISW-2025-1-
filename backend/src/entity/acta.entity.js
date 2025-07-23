@@ -20,6 +20,11 @@ const ActaSchema = new EntitySchema({
       length: 500,
       nullable: false,
     },
+    subidoPor: {
+      type: "varchar",
+      length: 255,
+      nullable: false,
+    },
     createdAt: {
       type: "timestamp",
       default: () => "CURRENT_TIMESTAMP",

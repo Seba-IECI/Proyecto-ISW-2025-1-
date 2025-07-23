@@ -7,14 +7,15 @@ export async function subidaActaService(actaData) {
   try {
     // Obtiene el repositorio de la entidad Acta a través de TypeORM
     const actaRepository = AppDataSource.getRepository(Acta);
-    // Extrae el nombre del acta y la ruta donde se almacenó
-    const { nombre, actaPath } = actaData;
-    console.log("Datos recibidos para guardar en la base de datos:", { nombre, actaPath });
+    // Extrae el nombre del acta, la ruta donde se almacenó y quien la subió
+    const { nombre, actaPath, subidoPor } = actaData;
+    console.log("Datos recibidos para guardar en la base de datos:", { nombre, actaPath, subidoPor });
 
     // Crea una nueva instancia de la entidad Acta con los datos recibidos
     const newActa = actaRepository.create({
       nombre,
       archivo: actaPath, // Almacena la ruta del acta, no el contenido
+      subidoPor,
     });
     // Guarda la nueva instancia en la base de datos
     await actaRepository.save(newActa);
@@ -53,11 +54,12 @@ export async function actualizarActaService(id, actaData) {
     }
 
     
-    const { nombre, actaPath } = actaData;
+    const { nombre, actaPath, subidoPor } = actaData;
     
     
     if (nombre) actaExistente.nombre = nombre;
     if (actaPath) actaExistente.archivo = actaPath;
+    if (subidoPor) actaExistente.subidoPor = subidoPor;
 
     
     const actaActualizada = await actaRepository.save(actaExistente);

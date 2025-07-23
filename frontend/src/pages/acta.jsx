@@ -35,6 +35,7 @@ const Acta = () => {
     
     const [selectedActa, setSelectedActa] = useState([]);
     const [filterNombre, setFilterNombre] = useState('');
+    const [filterSubidoPor, setFilterSubidoPor] = useState('');
     const [isEditMode, setIsEditMode] = useState(false);
     
     
@@ -122,6 +123,10 @@ const Acta = () => {
         setFilterNombre(e.target.value);
     };
 
+    const handleSubidoPorFilterChange = (e) => {
+        setFilterSubidoPor(e.target.value);
+    };
+
    
     const handleSelectionChange = (selectedActas) => {
         setSelectedActa(selectedActas);
@@ -197,7 +202,8 @@ const Acta = () => {
 
     
     const filteredActas = actas.filter(acta => 
-        acta.nombre.toLowerCase().includes(filterNombre.toLowerCase())
+        acta.nombre.toLowerCase().includes(filterNombre.toLowerCase()) &&
+        (acta.subidoPor || '').toLowerCase().includes(filterSubidoPor.toLowerCase())
     );
 
     return (
@@ -211,6 +217,13 @@ const Acta = () => {
                             placeholder="Filtrar por nombre"
                             value={filterNombre}
                             onChange={handleNombreFilterChange}
+                            className="search-input"
+                        />
+                        <input
+                            type="text"
+                            placeholder="Filtrar por quien subió"
+                            value={filterSubidoPor}
+                            onChange={handleSubidoPorFilterChange}
                             className="search-input"
                         />
                         <button 
@@ -234,6 +247,7 @@ const Acta = () => {
                             <thead>
                                 <tr>
                                     <th>Nombre</th>
+                                    <th>Subido Por</th>
                                     <th>Fecha de Creación</th>
                                     <th>Archivo</th>
                                     <th>Acciones</th>
@@ -243,6 +257,7 @@ const Acta = () => {
                                 {filteredActas.map((acta) => (
                                     <tr key={acta.id}>
                                         <td>{acta.nombre}</td>
+                                        <td>{acta.subidoPor || 'No especificado'}</td>
                                         <td>{formatDate(acta.createdAt)}</td>
                                         <td>
                                             <a 
@@ -365,6 +380,17 @@ const Acta = () => {
                                     onChange={handleChange}
                                     placeholder="Ingrese el nombre del acta"
                                     required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="subidoPor">Subido Por:</label>
+                                <input
+                                    type="text"
+                                    id="subidoPor"
+                                    name="subidoPor"
+                                    value={editingActa?.subidoPor || 'No especificado'}
+                                    readOnly
+                                    className="readonly-input"
                                 />
                             </div>
                             <div className="form-group">

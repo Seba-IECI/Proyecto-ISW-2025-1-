@@ -12,16 +12,22 @@ export async function subidaActa(req, res) {
   try {
     const { nombre } = req.body;
     let actaPath = req.file?.path;
+    const subidoPor = req.user?.nombreCompleto;
 
     if (!actaPath) {
       return handleErrorClient(res, 400, "Acta no subida");
     }
+
+    if (!subidoPor) {
+      return handleErrorClient(res, 400, "Usuario no autenticado");
+    }
+
     // Construye la URL completa para acceder al acta subida
     const baseUrl = `http://${HOST}:${PORT}/api/uploads/actas/`;
     // Obtiene el nombre del acta y lo añade a la URL base
     actaPath = baseUrl + path.basename(actaPath);
 
-    const [newActa, error] = await subidaActaService({ nombre, actaPath });
+    const [newActa, error] = await subidaActaService({ nombre, actaPath, subidoPor });
 
     if (error) return handleErrorClient(res, 400, error);
 
