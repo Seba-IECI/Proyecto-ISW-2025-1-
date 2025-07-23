@@ -1,5 +1,6 @@
 import useGetAsamblea from '@hooks/asamblea/useGetAsamblea';
 import '@styles/asamblea.css';
+import { useState } from 'react';
 
 const AsambleaU = () => {
     const { 
@@ -7,6 +8,18 @@ const AsambleaU = () => {
         loading
     } = useGetAsamblea();
 
+
+    const [filterTema, setFilterTema] = useState('');
+    const [filterFecha, setFilterFecha] = useState('');
+
+    
+    const handleTemaFilterChange = (e) => {
+        setFilterTema(e.target.value);
+    };
+
+    const handleFechaFilterChange = (e) => {
+        setFilterFecha(e.target.value);
+    };
     
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -18,6 +31,14 @@ const AsambleaU = () => {
             minute: '2-digit'
         });
     };
+
+   
+    const filteredAsambleas = asambleas.filter(asamblea => {
+        const matchesTema = asamblea.tema.toLowerCase().includes(filterTema.toLowerCase());
+        const matchesFecha = filterFecha === '' || 
+            formatDate(asamblea.fecha).toLowerCase().includes(filterFecha.toLowerCase());
+        return matchesTema && matchesFecha;
+    });
 
     return (
         <div className="asamblea-container">
@@ -32,14 +53,32 @@ const AsambleaU = () => {
                 <div className="asambleas-list">
                     <h3>Todas las Asambleas</h3>
                     
+                    
+                    <div className="filter-actions">
+                        <input
+                            type="text"
+                            placeholder="Filtrar por tema"
+                            value={filterTema}
+                            onChange={handleTemaFilterChange}
+                            className="search-input"
+                        />
+                        <input
+                            type="text"
+                            placeholder="Filtrar por fecha"
+                            value={filterFecha}
+                            onChange={handleFechaFilterChange}
+                            className="search-input"
+                        />
+                    </div>
+                    
                     {loading ? (
                         <div className="loading-spinner">
                             Cargando asambleas...
                         </div>
-                    ) : asambleas.length === 0 ? (
+                    ) : filteredAsambleas.length === 0 ? (
                         <div className="empty-state">
-                            <h3>No hay asambleas registradas</h3>
-                            <p>No se encontraron asambleas</p>
+                            <h3>No hay asambleas que coincidan con los filtros</h3>
+                            <p>Intenta ajustar los criterios de búsqueda</p>
                         </div>
                     ) : (
                         <table className="asambleas-table">
@@ -54,7 +93,7 @@ const AsambleaU = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {asambleas.map((asamblea) => (
+                                {filteredAsambleas.map((asamblea) => (
                                     <tr key={asamblea.id}>
                                         <td>{asamblea.tema}</td>
                                         <td>{asamblea.lugar}</td>

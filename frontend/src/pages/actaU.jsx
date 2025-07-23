@@ -1,11 +1,25 @@
 import useGetActa from '@hooks/acta/useGetActa';
 import '@styles/asamblea.css';
+import { useState } from 'react';
 
 const ActaU = () => {
     const { 
         actas,
         loading
     } = useGetActa();
+
+    
+    const [filterNombre, setFilterNombre] = useState('');
+    const [filterFecha, setFilterFecha] = useState('');
+
+    
+    const handleNombreFilterChange = (e) => {
+        setFilterNombre(e.target.value);
+    };
+
+    const handleFechaFilterChange = (e) => {
+        setFilterFecha(e.target.value);
+    };
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -17,6 +31,14 @@ const ActaU = () => {
             minute: '2-digit'
         });
     };
+
+   
+    const filteredActas = actas.filter(acta => {
+        const matchesNombre = acta.nombre.toLowerCase().includes(filterNombre.toLowerCase());
+        const matchesFecha = filterFecha === '' || 
+            formatDate(acta.createdAt).toLowerCase().includes(filterFecha.toLowerCase());
+        return matchesNombre && matchesFecha;
+    });
 
     return (
         <div className="asamblea-container">
@@ -31,14 +53,32 @@ const ActaU = () => {
                 <div className="asambleas-list">
                     <h3>Todas las Actas</h3>
                     
+                    
+                    <div className="filter-actions">
+                        <input
+                            type="text"
+                            placeholder="Filtrar por nombre"
+                            value={filterNombre}
+                            onChange={handleNombreFilterChange}
+                            className="search-input"
+                        />
+                        <input
+                            type="text"
+                            placeholder="Filtrar por fecha"
+                            value={filterFecha}
+                            onChange={handleFechaFilterChange}
+                            className="search-input"
+                        />
+                    </div>
+                    
                     {loading ? (
                         <div className="loading-spinner">
                             Cargando actas...
                         </div>
-                    ) : actas.length === 0 ? (
+                    ) : filteredActas.length === 0 ? (
                         <div className="empty-state">
-                            <h3>No hay actas registradas</h3>
-                            <p>No se encontraron actas</p>
+                            <h3>No hay actas que coincidan con los filtros</h3>
+                            <p>Intenta ajustar los criterios de búsqueda</p>
                         </div>
                     ) : (
                         <table className="asambleas-table">
@@ -51,7 +91,7 @@ const ActaU = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {actas.map((acta) => (
+                                {filteredActas.map((acta) => (
                                     <tr key={acta.id}>
                                         <td>{acta.nombre}</td>
                                         <td>{acta.subidoPor || 'No especificado'}</td>
