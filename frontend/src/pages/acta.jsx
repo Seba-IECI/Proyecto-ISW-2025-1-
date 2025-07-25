@@ -290,6 +290,24 @@ const Acta = () => {
                         </table>
                     )}
                 </div>
+
+                <div className="info-cards">
+                    <div className="info-card">
+                        <div className="info-card-icon">📋</div>
+                        <h3>Gestión de Actas</h3>
+                        <p>Administra todas las actas del sistema. Crea, edita y elimina actas según sea necesario.</p>
+                    </div>
+                    <div className="info-card">
+                        <div className="info-card-icon">📁</div>
+                        <h3>Archivos PDF</h3>
+                        <p>Puedes ver y descargar los archivos PDF haciendo clic en "Ver PDF".</p>
+                    </div>
+                    <div className="info-card">
+                        <div className="info-card-icon">📅</div>
+                        <h3>Fechas y Control</h3>
+                        <p>Visualiza las fechas de creación y controla quién subió cada acta al sistema.</p>
+                    </div>
+                </div>
             </div>
 
            

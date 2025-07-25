@@ -89,7 +89,6 @@ const AsambleaU = () => {
                                     <th>Fecha</th>
                                     <th>Estado</th>
                                     <th>Creador</th>
-                                    <th>Fecha de Creación</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -103,7 +102,6 @@ const AsambleaU = () => {
                             </span>
                         </td>
                                         <td>{asamblea.creador || 'N/A'}</td>
-                                        <td>{formatDate(asamblea.createdAt)}</td>
                                     </tr>
                                 ))}
                             </tbody>
