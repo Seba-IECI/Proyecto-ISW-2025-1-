@@ -28,9 +28,15 @@ const useSubirActa = () => {
             const formData = new FormData();
             formData.append('nombre', newActaData.nombre);
             formData.append('archivo', newActaData.archivo);
-            if (newActaData.asambleaId) {
+            if (newActaData.asambleaId && newActaData.asambleaId !== '') {
                 formData.append('asambleaId', newActaData.asambleaId);
             }
+
+            console.log("Datos enviados al backend:", {
+                nombre: newActaData.nombre,
+                asambleaId: newActaData.asambleaId,
+                hasFile: !!newActaData.archivo
+            });
 
             const response = await subirActa(formData);
             
@@ -59,7 +65,8 @@ const useSubirActa = () => {
     const resetForm = () => {
         setDataActa({
             nombre: '',
-            archivo: null
+            archivo: null,
+            asambleaId: ''
         });
     };
 

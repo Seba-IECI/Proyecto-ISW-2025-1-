@@ -60,6 +60,26 @@ export async function crearAsambleaService(query){
     }
 }
 
+export async function getAsambleasDisponiblesService(){
+    try {
+        const asambleaRepository = AppDataSource.getRepository(Asamblea);
+        
+        await updateAsambleasVencidas();
+        
+        
+        const asambleasDisponibles = await asambleaRepository
+            .createQueryBuilder("asamblea")
+            .leftJoin("Acta", "acta", "acta.asambleaId = asamblea.id")
+            .where("acta.id IS NULL")
+            .getMany();
+
+        return [asambleasDisponibles, null];
+    } catch (error) {
+        console.error("Error al obtener asambleas disponibles:", error);
+        return [null, "Error interno en el servidor"];
+    }
+}
+
 export async function getAsambleaService(){
     try {
         const asambleaRepository = AppDataSource.getRepository(Asamblea);

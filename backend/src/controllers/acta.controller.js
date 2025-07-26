@@ -14,6 +14,8 @@ export async function subidaActa(req, res) {
     let actaPath = req.file?.path;
     const subidoPor = req.user?.nombreCompleto;
 
+    console.log("Datos recibidos en el controlador:", { nombre, asambleaId, subidoPor });
+
     if (!actaPath) {
       return handleErrorClient(res, 400, "Acta no subida");
     }
@@ -27,11 +29,17 @@ export async function subidaActa(req, res) {
     // Obtiene el nombre del acta y lo añade a la URL base
     actaPath = baseUrl + path.basename(actaPath);
 
+    
+    const asambleaIdParsed = asambleaId && asambleaId !== '' && asambleaId !== 'undefined' ? parseInt(asambleaId) : null;
+    
+    console.log("asambleaId original:", asambleaId, "tipo:", typeof asambleaId);
+    console.log("asambleaId parseado:", asambleaIdParsed, "tipo:", typeof asambleaIdParsed);
+
     const [newActa, error] = await subidaActaService({ 
       nombre, 
       actaPath, 
       subidoPor, 
-      asambleaId: asambleaId ? parseInt(asambleaId) : null 
+      asambleaId: asambleaIdParsed
     });
 
     if (error) return handleErrorClient(res, 400, error);
@@ -44,7 +52,7 @@ export async function subidaActa(req, res) {
 
 export async function getActas(req, res) {
   try {
-    // Llama al service para obtener todas las actas desde la base de datos
+    
     const [actas, error] = await getActasService();
     if (error) return handleErrorClient(res, 404, error);
 
