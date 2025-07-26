@@ -85,6 +85,7 @@ const ActaU = () => {
                             <thead>
                                 <tr>
                                     <th>Nombre</th>
+                                    <th>Asamblea</th>
                                     <th>Subido Por</th>
                                     <th>Fecha de Creación</th>
                                     <th>Archivo</th>
@@ -94,6 +95,17 @@ const ActaU = () => {
                                 {filteredActas.map((acta) => (
                                     <tr key={acta.id}>
                                         <td>{acta.nombre}</td>
+                                        <td>
+                                            {acta.asamblea ? (
+                                                <span>
+                                                    {acta.asamblea.tema}
+                                                    <br />
+                                                    <small>{new Date(acta.asamblea.fecha).toLocaleDateString('es-ES')}</small>
+                                                </span>
+                                            ) : (
+                                                <span className="no-asamblea">Sin asamblea</span>
+                                            )}
+                                        </td>
                                         <td>{acta.subidoPor || 'No especificado'}</td>
                                         <td>{formatDate(acta.createdAt)}</td>
                                         <td>

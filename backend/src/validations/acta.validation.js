@@ -29,6 +29,16 @@ export const actaNameValidation = Joi.object({
       }
       
       return value;
+    }),
+  asambleaId: Joi.number()
+    .integer()
+    .positive()
+    .optional()
+    .allow(null)
+    .messages({
+      "number.base": "El ID de la asamblea debe ser un número",
+      "number.integer": "El ID de la asamblea debe ser un número entero",
+      "number.positive": "El ID de la asamblea debe ser un número positivo"
     })
 });
 
@@ -58,6 +68,16 @@ export const actaUpdateValidation = Joi.object({
       }
       
       return value;
+    }),
+  asambleaId: Joi.number()
+    .integer()
+    .positive()
+    .optional()
+    .allow(null)
+    .messages({
+      "number.base": "El ID de la asamblea debe ser un número",
+      "number.integer": "El ID de la asamblea debe ser un número entero",
+      "number.positive": "El ID de la asamblea debe ser un número positivo"
     })
 });
 

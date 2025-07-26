@@ -10,9 +10,11 @@ import {
 
 export async function subidaActa(req, res) {
   try {
-    const { nombre } = req.body;
+    const { nombre, asambleaId } = req.body;
     let actaPath = req.file?.path;
     const subidoPor = req.user?.nombreCompleto;
+
+    console.log("Datos recibidos en el controlador:", { nombre, asambleaId, subidoPor });
 
     if (!actaPath) {
       return handleErrorClient(res, 400, "Acta no subida");
@@ -27,7 +29,18 @@ export async function subidaActa(req, res) {
     // Obtiene el nombre del acta y lo añade a la URL base
     actaPath = baseUrl + path.basename(actaPath);
 
-    const [newActa, error] = await subidaActaService({ nombre, actaPath, subidoPor });
+    
+    const asambleaIdParsed = asambleaId && asambleaId !== '' && asambleaId !== 'undefined' ? parseInt(asambleaId) : null;
+    
+    console.log("asambleaId original:", asambleaId, "tipo:", typeof asambleaId);
+    console.log("asambleaId parseado:", asambleaIdParsed, "tipo:", typeof asambleaIdParsed);
+
+    const [newActa, error] = await subidaActaService({ 
+      nombre, 
+      actaPath, 
+      subidoPor, 
+      asambleaId: asambleaIdParsed
+    });
 
     if (error) return handleErrorClient(res, 400, error);
 
@@ -39,7 +52,7 @@ export async function subidaActa(req, res) {
 
 export async function getActas(req, res) {
   try {
-    // Llama al service para obtener todas las actas desde la base de datos
+    
     const [actas, error] = await getActasService();
     if (error) return handleErrorClient(res, 404, error);
 
@@ -54,7 +67,7 @@ export async function getActas(req, res) {
 export async function actualizarActa(req, res) {
   try {
     const { id } = req.params;
-    const { nombre } = req.body;
+    const { nombre, asambleaId } = req.body;
     let actaPath = req.file?.path;
 
    
@@ -65,6 +78,9 @@ export async function actualizarActa(req, res) {
     
     const actaData = {};
     if (nombre) actaData.nombre = nombre;
+    if (asambleaId !== undefined) {
+      actaData.asambleaId = asambleaId ? parseInt(asambleaId) : null;
+    }
     
     
     if (actaPath) {

@@ -1,26 +1,60 @@
 "use strict";
 
 import Acta from "../entity/acta.entity.js";
+import Asamblea from "../entity/asamblea.entity.js";
 import { AppDataSource } from "../config/configDb.js";
 
 export async function subidaActaService(actaData) {
   try {
-    // Obtiene el repositorio de la entidad Acta a través de TypeORM
+    
     const actaRepository = AppDataSource.getRepository(Acta);
-    // Extrae el nombre del acta, la ruta donde se almacenó y quien la subió
-    const { nombre, actaPath, subidoPor } = actaData;
-    console.log("Datos recibidos para guardar en la base de datos:", { nombre, actaPath, subidoPor });
+    const asambleaRepository = AppDataSource.getRepository(Asamblea);
+    
+    
+    const { nombre, actaPath, subidoPor, asambleaId } = actaData;
+    console.log("Datos recibidos en el servicio:", { nombre, actaPath, subidoPor, asambleaId });
 
-    // Crea una nueva instancia de la entidad Acta con los datos recibidos
+    
+    if (asambleaId) {
+      const asamblea = await asambleaRepository.findOne({ where: { id: asambleaId } });
+      if (!asamblea) {
+        return [null, "La asamblea especificada no existe"];
+      }
+      console.log("Asamblea encontrada:", asamblea.tema);
+      
+      
+      const actaExistente = await actaRepository.findOne({ 
+        where: { asambleaId: asambleaId } 
+      });
+      if (actaExistente) {
+        return [null, `La asamblea "${asamblea.tema}" ya tiene un acta asociada`];
+      }
+    } else {
+      console.log("No se proporcionó asambleaId");
+    }
+
+    
     const newActa = actaRepository.create({
       nombre,
-      archivo: actaPath, // Almacena la ruta del acta, no el contenido
+      archivo: actaPath, 
       subidoPor,
+      asambleaId,
     });
-    // Guarda la nueva instancia en la base de datos
+    console.log("Acta creada (antes de guardar):", newActa);
+    
+    
     await actaRepository.save(newActa);
-    // Retorna el acta creada y null para indicar que no hubo errores
-    return [newActa, null];
+    console.log("Acta guardada en la base de datos");
+    
+    
+    const actaConAsamblea = await actaRepository.findOne({
+      where: { id: newActa.id },
+      relations: ["asamblea"]
+    });
+    console.log("Acta recuperada con relación:", actaConAsamblea);
+    
+    
+    return [actaConAsamblea, null];
   } catch (error) {
     console.error("Error al subir acta:", error);
     return [null, "Error interno del servidor"];
@@ -29,11 +63,13 @@ export async function subidaActaService(actaData) {
 
 export async function getActasService() {
   try {
-    // Obtiene el repositorio de la entidad Acta
+    
     const actaRepository = AppDataSource.getRepository(Acta);
 
-    const actas = await actaRepository.find();
-    // Retorna las actas encontradas y null para indicar que no hubo errores
+    const actas = await actaRepository.find({
+      relations: ["asamblea"],
+    });
+    
     return [actas, null];
   } catch (error) {
     console.error("Error al obtener actas:", error);
@@ -45,6 +81,7 @@ export async function actualizarActaService(id, actaData) {
   try {
     
     const actaRepository = AppDataSource.getRepository(Acta);
+    const asambleaRepository = AppDataSource.getRepository(Asamblea);
     
     
     const actaExistente = await actaRepository.findOne({ where: { id } });
@@ -54,18 +91,43 @@ export async function actualizarActaService(id, actaData) {
     }
 
     
-    const { nombre, actaPath, subidoPor } = actaData;
+    const { nombre, actaPath, subidoPor, asambleaId } = actaData;
+    
+   
+    if (asambleaId !== undefined && asambleaId !== null) {
+      const asamblea = await asambleaRepository.findOne({ where: { id: asambleaId } });
+      if (!asamblea) {
+        return [null, "La asamblea especificada no existe"];
+      }
+      
+      
+      const actaConMismaAsamblea = await actaRepository
+        .createQueryBuilder("acta")
+        .where("acta.asambleaId = :asambleaId", { asambleaId })
+        .andWhere("acta.id != :id", { id })
+        .getOne();
+      if (actaConMismaAsamblea) {
+        return [null, `La asamblea "${asamblea.tema}" ya tiene un acta asociada`];
+      }
+    }
     
     
     if (nombre) actaExistente.nombre = nombre;
     if (actaPath) actaExistente.archivo = actaPath;
     if (subidoPor) actaExistente.subidoPor = subidoPor;
+    if (asambleaId !== undefined) actaExistente.asambleaId = asambleaId;
 
     
     const actaActualizada = await actaRepository.save(actaExistente);
     
     
-    return [actaActualizada, null];
+    const actaConAsamblea = await actaRepository.findOne({
+      where: { id: actaActualizada.id },
+      relations: ["asamblea"]
+    });
+    
+    
+    return [actaConAsamblea, null];
   } catch (error) {
     console.error("Error al actualizar acta:", error);
     return [null, "Error interno del servidor"];

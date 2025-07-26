@@ -18,7 +18,7 @@ const useUpActa = () => {
             return { success: false, message: "No hay acta seleccionada" };
         }
 
-        if (!updatedActaData || (!updatedActaData.nombre && !updatedActaData.archivo)) {
+        if (!updatedActaData || (!updatedActaData.nombre && !updatedActaData.archivo && updatedActaData.asambleaId === undefined)) {
             showErrorAlert("Error", "Debe proporcionar al menos un campo para actualizar");
             return { success: false, message: "Datos incompletos" };
         }
@@ -35,6 +35,10 @@ const useUpActa = () => {
             
             if (updatedActaData.archivo) {
                 formData.append('archivo', updatedActaData.archivo);
+            }
+
+            if (updatedActaData.asambleaId !== undefined) {
+                formData.append('asambleaId', updatedActaData.asambleaId || '');
             }
 
             const response = await actualizarActa(editingActa.id, formData);

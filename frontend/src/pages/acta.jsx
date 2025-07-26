@@ -5,6 +5,8 @@ import useSubirActa from '@hooks/acta/useSubirActa';
 import useUpActa from '@hooks/acta/useUpActa';
 import useGetActa from '@hooks/acta/useGetActa';
 import useDelActa from '@hooks/acta/useDelActa';
+import useGetAsamblea from '@hooks/asamblea/useGetAsamblea';
+import useGetAsambleasDisponibles from '@hooks/asamblea/useGetAsambleasDisponibles';
 import { showErrorAlert, showSuccessAlert, deleteDataAlert } from '@helpers/sweetAlert';
 import '@styles/users.css'; 
 import '@styles/acta.css'; 
@@ -15,6 +17,8 @@ const Acta = () => {
     
     
     const { actas, loading, fetchActas } = useGetActa();
+    const { asamblea: asambleas, loading: loadingAsambleas } = useGetAsamblea();
+    const { asambleasDisponibles, loading: loadingAsambleasDisponibles, fetchAsambleasDisponibles } = useGetAsambleasDisponibles();
     const { 
         handleCreate, 
         isPopupOpen: isCreatePopupOpen, 
@@ -41,7 +45,8 @@ const Acta = () => {
     
     const [formData, setFormData] = useState({
         nombre: '',
-        archivo: null
+        archivo: null,
+        asambleaId: ''
     });
 
    
@@ -87,7 +92,9 @@ const Acta = () => {
         if (!validateForm()) return;
 
         try {
-            console.log("Datos del formulario:", formData); 
+            console.log("Datos del formulario antes de enviar:", formData); 
+            console.log("Tipo de asambleaId:", typeof formData.asambleaId, "Valor:", formData.asambleaId);
+            
             let result;
             if (isEditMode) {
                 result = await handleUpdate(formData);
@@ -99,6 +106,7 @@ const Acta = () => {
 
             if (result && result.success) {
                 await fetchActas(); 
+                await fetchAsambleasDisponibles(); 
                 resetForm();
                 setIsCreatePopupOpen(false);
                 setIsEditPopupOpen(false);
@@ -114,7 +122,8 @@ const Acta = () => {
     const resetForm = () => {
         setFormData({
             nombre: '',
-            archivo: null
+            archivo: null,
+            asambleaId: ''
         });
     };
 
@@ -167,7 +176,8 @@ const Acta = () => {
         setIsEditMode(true);
         setFormData({
             nombre: acta.nombre,
-            archivo: null 
+            archivo: null,
+            asambleaId: acta.asambleaId || ''
         });
         handleClickEdit(acta);
         setIsEditPopupOpen(true);
@@ -247,6 +257,7 @@ const Acta = () => {
                             <thead>
                                 <tr>
                                     <th>Nombre</th>
+                                    <th>Asamblea</th>
                                     <th>Subido Por</th>
                                     <th>Fecha de Creación</th>
                                     <th>Archivo</th>
@@ -257,6 +268,17 @@ const Acta = () => {
                                 {filteredActas.map((acta) => (
                                     <tr key={acta.id}>
                                         <td>{acta.nombre}</td>
+                                        <td>
+                                            {acta.asamblea ? (
+                                                <span>
+                                                    {acta.asamblea.tema}
+                                                    <br />
+                                                    <small>{new Date(acta.asamblea.fecha).toLocaleDateString('es-ES')}</small>
+                                                </span>
+                                            ) : (
+                                                <span className="no-asamblea">Sin asamblea</span>
+                                            )}
+                                        </td>
                                         <td>{acta.subidoPor || 'No especificado'}</td>
                                         <td>{formatDate(acta.createdAt)}</td>
                                         <td>
@@ -305,7 +327,7 @@ const Acta = () => {
                     <div className="info-card">
                         <div className="info-card-icon">📅</div>
                         <h3>Fechas y Control</h3>
-                        <p>Visualiza las fechas de creación y controla quién subió cada acta al sistema.</p>
+                        <p>Visualiza las fechas de creación, controla quién subió cada acta al sistema y asocia un acta a la asamblea correspondiente.</p>
                     </div>
                 </div>
             </div>
@@ -338,6 +360,23 @@ const Acta = () => {
                                     placeholder="Ingrese el nombre del acta"
                                     required
                                 />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="asambleaId">Asamblea (opcional):</label>
+                                <select
+                                    id="asambleaId"
+                                    name="asambleaId"
+                                    value={formData.asambleaId}
+                                    onChange={handleChange}
+                                >
+                                    <option value="">Sin asamblea asociada</option>
+                                    {asambleasDisponibles && asambleasDisponibles.map((asamblea) => (
+                                        <option key={asamblea.id} value={asamblea.id}>
+                                            {asamblea.tema} - {new Date(asamblea.fecha).toLocaleDateString('es-ES')}
+                                        </option>
+                                    ))}
+                                </select>
+                                {loadingAsambleasDisponibles && <small>Cargando asambleas disponibles...</small>}
                             </div>
                             <div className="form-group">
                                 <label htmlFor="archivo">Archivo PDF:</label>
@@ -399,6 +438,23 @@ const Acta = () => {
                                     placeholder="Ingrese el nombre del acta"
                                     required
                                 />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="asambleaId">Asamblea (opcional):</label>
+                                <select
+                                    id="asambleaId"
+                                    name="asambleaId"
+                                    value={formData.asambleaId}
+                                    onChange={handleChange}
+                                >
+                                    <option value="">Sin asamblea asociada</option>
+                                    {asambleas && asambleas.map((asamblea) => (
+                                        <option key={asamblea.id} value={asamblea.id}>
+                                            {asamblea.tema} - {new Date(asamblea.fecha).toLocaleDateString('es-ES')}
+                                        </option>
+                                    ))}
+                                </select>
+                                {loadingAsambleas && <small>Cargando asambleas...</small>}
                             </div>
                             <div className="form-group">
                                 <label htmlFor="subidoPor">Subido Por:</label>

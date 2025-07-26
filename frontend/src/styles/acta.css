@@ -41,6 +41,12 @@
     text-decoration: underline;
 }
 
+.no-asamblea {
+    color: #6c757d;
+    font-style: italic;
+    font-size: 0.9em;
+}
+
 .actions {
     display: flex;
     gap: 8px;

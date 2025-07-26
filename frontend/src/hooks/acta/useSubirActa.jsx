@@ -7,7 +7,8 @@ const useSubirActa = () => {
     const [loading, setLoading] = useState(false);
     const [dataActa, setDataActa] = useState({
         nombre: '',
-        archivo: null
+        archivo: null,
+        asambleaId: ''
     });
 
     const handleClickCreate = () => {
@@ -27,6 +28,15 @@ const useSubirActa = () => {
             const formData = new FormData();
             formData.append('nombre', newActaData.nombre);
             formData.append('archivo', newActaData.archivo);
+            if (newActaData.asambleaId && newActaData.asambleaId !== '') {
+                formData.append('asambleaId', newActaData.asambleaId);
+            }
+
+            console.log("Datos enviados al backend:", {
+                nombre: newActaData.nombre,
+                asambleaId: newActaData.asambleaId,
+                hasFile: !!newActaData.archivo
+            });
 
             const response = await subirActa(formData);
             
@@ -35,7 +45,8 @@ const useSubirActa = () => {
                 setIsPopupOpen(false);
                 setDataActa({
                     nombre: '',
-                    archivo: null
+                    archivo: null,
+                    asambleaId: ''
                 });
                 return { success: true, response }; 
             } else {
@@ -54,7 +65,8 @@ const useSubirActa = () => {
     const resetForm = () => {
         setDataActa({
             nombre: '',
-            archivo: null
+            archivo: null,
+            asambleaId: ''
         });
     };
 

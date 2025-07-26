@@ -1,13 +1,15 @@
 "use strict";
 import Asamblea from "../entity/asamblea.entity.js";
 import { AppDataSource } from "../config/configDb.js";
+import { getAllUserEmailsService } from "./user.service.js";
+import { sendNewAsambleaNotification } from "./email.service.js";
 
 export async function crearAsambleaService(query){
     try {
         const {tema, lugar, fecha, temasATratar, creador} = query;
         const asambleaRepository = AppDataSource.getRepository(Asamblea);
 
-        // Verificar si ya existe una asamblea en la misma fecha (solo día, no hora exacta)
+        
         const fechaInicio = new Date(fecha);
         fechaInicio.setHours(0, 0, 0, 0);
         const fechaFin = new Date(fecha);
@@ -28,18 +30,53 @@ export async function crearAsambleaService(query){
         const nuevaAsamblea = asambleaRepository.create({
             tema,
             lugar,
-            fecha: new Date(fecha), // Asegurar que se guarde como timestamp completo
+            fecha: new Date(fecha), 
             temasATratar,
             creador,
             createdAt: new Date(),
         });
 
         await asambleaRepository.save(nuevaAsamblea);
+
+        
+        try {
+            const [usuarios, errorUsuarios] = await getAllUserEmailsService();
+            if (!errorUsuarios && usuarios && usuarios.length > 0) {
+                await sendNewAsambleaNotification(usuarios, nuevaAsamblea);
+                console.log(`Notificaciones enviadas para la asamblea: ${nuevaAsamblea.tema}`);
+            } else {
+                console.log("No se encontraron usuarios para notificar sobre la nueva asamblea");
+            }
+        } catch (emailError) {
+            console.error("Error al enviar notificaciones de asamblea:", emailError);
+            
+        }
+
         return [nuevaAsamblea, null];
 
     } catch (error) {
         console.error("Error al crear la asamblea", error);
         return [null, "Error interno del servidor"];
+    }
+}
+
+export async function getAsambleasDisponiblesService(){
+    try {
+        const asambleaRepository = AppDataSource.getRepository(Asamblea);
+        
+        await updateAsambleasVencidas();
+        
+        
+        const asambleasDisponibles = await asambleaRepository
+            .createQueryBuilder("asamblea")
+            .leftJoin("Acta", "acta", "acta.asambleaId = asamblea.id")
+            .where("acta.id IS NULL")
+            .getMany();
+
+        return [asambleasDisponibles, null];
+    } catch (error) {
+        console.error("Error al obtener asambleas disponibles:", error);
+        return [null, "Error interno en el servidor"];
     }
 }
 
@@ -85,7 +122,7 @@ export async function updateAsambleaService(query,body){
 
         
         if (fecha) {
-            // Verificar si ya existe una asamblea en la misma fecha (solo día, no hora exacta)
+            
             const fechaInicio = new Date(fecha);
             fechaInicio.setHours(0, 0, 0, 0);
             const fechaFin = new Date(fecha);
@@ -186,7 +223,7 @@ export async function updateAsambleasVencidas() {
     try {
         const asambleaRepository = AppDataSource.getRepository(Asamblea);
         const fechaActual = new Date();
-        fechaActual.setHours(23, 59, 59, 999); // Fin del día actual
+        fechaActual.setHours(23, 59, 59, 999); 
         
         
         const result = await asambleaRepository
