@@ -89,6 +89,7 @@ const AsambleaU = () => {
                                     <th>Fecha</th>
                                     <th>Estado</th>
                                     <th>Creador</th>
+                                    <th>Temas a Tratar</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -102,6 +103,19 @@ const AsambleaU = () => {
                             </span>
                         </td>
                                         <td>{asamblea.creador || 'N/A'}</td>
+                                        <td>
+                                            {asamblea.temasATratar ? (
+                                                <div className="temas-a-tratar">
+                                                    {asamblea.temasATratar.split('\n').map((tema, index) => (
+                                                        <div key={index} className="tema-item">
+                                                             {tema.trim()}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                <span className="no-temas">No especificado</span>
+                                            )}
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -113,7 +127,12 @@ const AsambleaU = () => {
                     <div className="info-card">
                         <div className="info-card-icon">📋</div>
                         <h3>Todas las Asambleas</h3>
-                        <p>Aquí se muestran todas las asambleas registradas en el sistema.</p>
+                        <p>Aquí se muestran todas las asambleas registradas en el sistema con sus temas a tratar.</p>
+                    </div>
+                    <div className="info-card">
+                        <div className="info-card-icon">📝</div>
+                        <h3>Temas a Tratar</h3>
+                        <p>Puedes ver los temas específicos que se tratarán en cada asamblea.</p>
                     </div>
                     <div className="info-card">
                         <div className="info-card-icon">⚠️</div>
