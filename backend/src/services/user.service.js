@@ -41,6 +41,23 @@ export async function getUsersService() {
   }
 }
 
+export async function getAllUserEmailsService() {
+  try {
+    const userRepository = AppDataSource.getRepository(User);
+
+    const users = await userRepository.find({
+      select: ["email", "nombreCompleto"]
+    });
+
+    if (!users || users.length === 0) return [[], null];
+
+    return [users, null];
+  } catch (error) {
+    console.error("Error al obtener emails de usuarios:", error);
+    return [null, "Error interno del servidor"];
+  }
+}
+
 export async function updateUserService(query, body) {
   try {
     const { id, rut, email } = query;
