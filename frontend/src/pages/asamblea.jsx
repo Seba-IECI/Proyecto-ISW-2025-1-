@@ -1,26 +1,92 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import useAsamblea from '@hooks/asamblea/useAsamblea';
+import useSubirAsamblea from '@hooks/asamblea/useSubirAsamblea';
+import useGetAsamblea from '@hooks/asamblea/useGetAsamblea';
+import useUpAsamblea from '@hooks/asamblea/useUpAsamblea';
+import useDelAsamblea from '@hooks/asamblea/useDelAsamblea';
+import AsambleaEstadoBadge from '@components/AsambleaEstadoBadge';
+import { showErrorAlert, showSuccessAlert, deleteDataAlert } from '@helpers/sweetAlert';
 import '@styles/asamblea.css';
 
 const Asamblea = () => {
+    
     const { 
-        asambleas,
-        loading,
-        isPopupOpen,
-        setIsPopupOpen,
-        isEditMode,
-        currentAsamblea,
         handleClickCreate,
         handleCreate,
-        handleClickEdit,
-        handleUpdate,
-        handleDelete,
-        formatDate
-    } = useAsamblea();
+        isPopupOpen,
+        setIsPopupOpen
+    } = useSubirAsamblea();
+    
+    const { 
+        asamblea: asambleas,
+        loading,
+        fetchGetAsamblea: fetchAsambleas
+    } = useGetAsamblea();
+    
+    const { fetchUpAsamblea } = useUpAsamblea();
+    const { fetchDelAsamblea } = useDelAsamblea();
+    
+   
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [currentAsamblea, setCurrentAsamblea] = useState(null);
     
     const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm();
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleString('es-ES', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    };
+
+    const handleClickEdit = (asamblea) => {
+        setIsEditMode(true);
+        setCurrentAsamblea(asamblea);
+        setIsPopupOpen(true);
+    };
+
+    const handleUpdate = async (data) => {
+        try {
+            const response = await fetchUpAsamblea(data, currentAsamblea.id);
+            if (response && response.status === "Success") {
+                showSuccessAlert("¡Éxito!", "Asamblea actualizada correctamente");
+                setIsPopupOpen(false);
+                await fetchAsambleas(); 
+                return { success: true };
+            } else {
+                showErrorAlert("Error", response?.message || "Error al actualizar la asamblea");
+                return { success: false, message: response?.message };
+            }
+        } catch (error) {
+            console.error("Error al actualizar la asamblea:", error);
+            showErrorAlert("Error", "Error interno del servidor");
+            return { success: false, message: "Error interno del servidor" };
+        }
+    };
+
+    const handleDelete = async (id) => {
+        const result = await deleteDataAlert();
+        if (result.isConfirmed) {
+            try {
+                const response = await fetchDelAsamblea(id);
+                if (response && response.status === "Success") {
+                    showSuccessAlert("¡Eliminado!", "Asamblea eliminada correctamente");
+                    await fetchAsambleas(); 
+                } else {
+                    showErrorAlert("Error", response?.message || "Error al eliminar la asamblea");
+                }
+            } catch (error) {
+                console.error("Error al eliminar la asamblea:", error);
+                showErrorAlert("Error", "Error interno del servidor");
+            }
+        }
+    };
 
     useEffect(() => {
         if (!isPopupOpen) {
@@ -28,14 +94,18 @@ const Asamblea = () => {
         }
     }, [isPopupOpen, reset]);
 
-    // Llenar formulario cuando se edita
+    
     useEffect(() => {
         if (isEditMode && currentAsamblea) {
-            // NO se permite editar el tema en modo edición
+            
             setValue('lugar', currentAsamblea.lugar);
-            // Formatear fecha para input datetime-local
+            setValue('temasATratar', currentAsamblea.temasATratar || '');
+            
             const date = new Date(currentAsamblea.fecha);
-            const formattedDate = date.toISOString().slice(0, 16);
+            
+            const timeOffset = date.getTimezoneOffset() * 60000;
+            const localDate = new Date(date.getTime() - timeOffset);
+            const formattedDate = localDate.toISOString().slice(0, 16);
             setValue('fecha', formattedDate);
         }
     }, [isEditMode, currentAsamblea, setValue]);
@@ -43,14 +113,20 @@ const Asamblea = () => {
     const onSubmit = async (data) => {
         setIsSubmitting(true);
         try {
+            let result;
             if (isEditMode) {
-                // En modo edición, no se envía el tema
+                
                 const { tema, ...updateData } = data;
-                await handleUpdate(updateData);
+                result = await handleUpdate(updateData);
             } else {
-                await handleCreate(data);
+                result = await handleCreate(data);
             }
-            reset();
+            
+            
+            if (result && result.success) {
+                await fetchAsambleas(); 
+                reset();
+            }
         } catch (error) {
             console.error('Error al procesar asamblea:', error);
         } finally {
@@ -60,6 +136,8 @@ const Asamblea = () => {
 
     const handleClosePopup = () => {
         setIsPopupOpen(false);
+        setIsEditMode(false);
+        setCurrentAsamblea(null);
         reset();
     };
 
@@ -106,6 +184,8 @@ const Asamblea = () => {
                                     <th>Tema</th>
                                     <th>Lugar</th>
                                     <th>Fecha</th>
+                                    <th>Estado</th>
+                                    <th>Temas a Tratar</th>
                                     <th>Creador</th>
                                     <th>Acciones</th>
                                 </tr>
@@ -116,6 +196,23 @@ const Asamblea = () => {
                                         <td>{asamblea.tema}</td>
                                         <td>{asamblea.lugar}</td>
                                         <td>{formatDate(asamblea.fecha)}</td>
+                                        <td>
+                                            <AsambleaEstadoBadge 
+                                                asamblea={asamblea} 
+                                                onEstadoChanged={fetchAsambleas}
+                                            />
+                                        </td>
+                                        <td className="temas-cell">
+                                            {asamblea.temasATratar ? (
+                                                <div className="temas-content">
+                                                    {asamblea.temasATratar.length > 100 
+                                                        ? `${asamblea.temasATratar.substring(0, 100)}...` 
+                                                        : asamblea.temasATratar}
+                                                </div>
+                                            ) : (
+                                                <span className="no-temas">Sin temas definidos</span>
+                                            )}
+                                        </td>
                                         <td>{asamblea.creador || 'N/A'}</td>
                                         <td className="actions-cell">
                                             <button 
@@ -153,6 +250,16 @@ const Asamblea = () => {
                         <div className="info-card-icon">📅</div>
                         <h3>Fecha</h3>
                         <p>Establece la fecha y hora de la asamblea.</p>
+                    </div>
+                    <div className="info-card">
+                        <div className="info-card-icon">⚠️</div>
+                        <h3>Estado</h3>
+                        <p>Controla el estado: Pendiente, Realizada o No Realizada.</p>
+                    </div>
+                    <div className="info-card">
+                        <div className="info-card-icon">📝</div>
+                        <h3>Temas a Tratar</h3>
+                        <p>Detalla los puntos específicos que se discutirán.</p>
                     </div>
                 </div>
             </div>
@@ -192,8 +299,8 @@ const Asamblea = () => {
                                             message: 'Máximo 90 caracteres'
                                         },
                                         pattern: isEditMode ? undefined : {
-                                            value: /^[a-zA-Z0-9\s]+$/,
-                                            message: 'Solo letras, números y espacios'
+                                            value: /^[a-zA-ZñÑáéíóúÁÉÍÓÚ0-9\s]+$/,
+                                            message: 'Solo letras, números, espacios, ñ y tildes'
                                         }
                                     })}
                                     value={isEditMode ? currentAsamblea?.tema : undefined}
@@ -226,8 +333,8 @@ const Asamblea = () => {
                                             message: 'Máximo 90 caracteres'
                                         },
                                         pattern: {
-                                            value: /^[a-zA-Z0-9\s]+$/,
-                                            message: 'Solo letras, números y espacios'
+                                            value: /^[a-zA-ZñÑáéíóúÁÉÍÓÚ0-9\s]+$/,
+                                            message: 'Solo letras, números, espacios, ñ y tildes'
                                         }
                                     })}
                                 />
@@ -254,6 +361,32 @@ const Asamblea = () => {
                                 />
                                 {errors.fecha && (
                                     <span className="error-message">{errors.fecha.message}</span>
+                                )}
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="temasATratar">Temas a Tratar</label>
+                                <textarea
+                                    id="temasATratar"
+                                    rows="4"
+                                    placeholder="Describe los temas que se tratarán en la asamblea..."
+                                    className={errors.temasATratar ? 'field-error' : ''}
+                                    {...register('temasATratar', {
+                                        maxLength: {
+                                            value: 1000,
+                                            message: 'Máximo 1000 caracteres'
+                                        },
+                                        pattern: {
+                                            value: /^[a-zA-ZñÑáéíóúÁÉÍÓÚ0-9\s.,;:()¿?¡!\-]*$/,
+                                            message: 'Solo letras, números, espacios, signos de puntuación, ñ y tildes'
+                                        }
+                                    })}
+                                />
+                                <small className="char-counter">
+                                    Opcional - Máximo 1000 caracteres
+                                </small>
+                                {errors.temasATratar && (
+                                    <span className="error-message">{errors.temasATratar.message}</span>
                                 )}
                             </div>
 

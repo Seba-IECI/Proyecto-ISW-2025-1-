@@ -9,12 +9,15 @@ export function useUpdateAviso(onSuccess) {
     setLoading(true);
     setError("");
     try {
-      await updateAviso(id, formData);
+      const result = await updateAviso(id, formData);
       if (onSuccess) onSuccess();
+      setLoading(false);
+      return result;
     } catch (err) {
       setError(err.response?.data?.message || "Error al actualizar aviso");
+      setLoading(false);
+      return { error: err.response?.data?.message || "Error al actualizar aviso" };
     }
-    setLoading(false);
   };
 
   return { handleUpdate, loading, error };

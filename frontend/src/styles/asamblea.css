@@ -1,9 +1,11 @@
 .asamblea-container {
     padding: 2rem;
-    max-width: 800px;
-    margin: 0 auto;
+    max-width: 100%;
+    width: 100%;
+    margin: 0;
     background: #f8f9fa;
     min-height: 100vh;
+    box-sizing: border-box;
 }
 
 .asamblea-header {
@@ -24,7 +26,7 @@
     font-size: 1.1rem;
     color: #666;
     margin: 0;
-    max-width: 600px;
+    max-width: 100%;
     margin: 0 auto;
 }
 
@@ -34,6 +36,8 @@
     padding: 2rem;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     border: 1px solid #e9ecef;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .create-section {
@@ -71,8 +75,8 @@
 
 .info-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
     margin-top: 2rem;
 }
 
@@ -102,13 +106,13 @@
     font-size: 0.9rem;
 }
 
-/* Popup específico para asamblea */
+
 .asamblea-popup {
     background: white;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    max-width: 450px;
+    max-width: 550px;
     width: 90%;
     border: 1px solid #e9ecef;
 }
@@ -240,39 +244,80 @@
 .asambleas-table {
     width: 100%;
     border-collapse: collapse;
+    margin-top: 1rem;
     background: white;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .asambleas-table th,
 .asambleas-table td {
     padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid #e9ecef;
+    border-bottom: 1px solid #dee2e6;
+    vertical-align: middle;
 }
 
 .asambleas-table th {
     background: #f8f9fa;
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
     font-weight: 600;
-    color: #333;
-    font-size: 0.9rem;
+    color: #495057;
 }
 
 .asambleas-table td {
-    color: #666;
-    font-size: 0.9rem;
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+    vertical-align: middle;
 }
 
 .asambleas-table tr:hover {
     background: #f8f9fa;
 }
 
+
+.asambleas-table th:nth-child(4),
+.asambleas-table td:nth-child(4) {
+    text-align: center;
+    width: 120px;
+}
+
+
+@media (max-width: 1200px) {
+    .asambleas-table {
+        font-size: 0.9rem;
+    }
+    
+    .asambleas-table th,
+    .asambleas-table td {
+        padding: 0.75rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .asambleas-table {
+        font-size: 0.8rem;
+    }
+    
+    .asambleas-table th,
+    .asambleas-table td {
+        padding: 0.5rem;
+    }
+    
+    .asambleas-table th:nth-child(4),
+    .asambleas-table td:nth-child(4) {
+        width: 100px;
+    }
+}
+
 .actions-cell {
     display: flex;
     gap: 0.5rem;
-    align-items: center;
+    align-items: flex-start;
+    justify-content: flex-start;
+    vertical-align: top;
 }
 
 .btn-edit {
@@ -284,6 +329,8 @@
     cursor: pointer;
     font-size: 0.8rem;
     transition: background 0.3s ease;
+    min-width: 60px;
+    white-space: nowrap;
 }
 
 .btn-edit:hover {
@@ -299,6 +346,8 @@
     cursor: pointer;
     font-size: 0.8rem;
     transition: background 0.3s ease;
+    min-width: 70px;
+    white-space: nowrap;
 }
 
 .btn-delete:hover {
@@ -326,7 +375,7 @@
     margin-bottom: 1.5rem;
 }
 
-/* Estilos para el badge de estado */
+
 .estado-badge {
     display: inline-block;
     padding: 0.25rem 0.75rem;
@@ -355,7 +404,7 @@
     border: 1px solid #f5c6cb;
 }
 
-/* Estilo para mensaje informativo */
+
 .info-message {
     display: block;
     font-size: 0.85rem;
@@ -364,7 +413,7 @@
     font-style: italic;
 }
 
-/* Estilo para campos deshabilitados */
+
 .asamblea-form input:disabled {
     background-color: #e9ecef;
     color: #6c757d;
@@ -423,5 +472,87 @@
     .btn-delete {
         width: 100%;
         padding: 0.4rem 0.8rem;
+    }
+}
+
+
+.temas-cell {
+    max-width: 300px;
+    min-width: 200px;
+    vertical-align: top;
+}
+
+.temas-content {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: #555;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.no-temas {
+    color: #999;
+    font-style: italic;
+    font-size: 0.85rem;
+}
+
+.char-counter {
+    display: block;
+    margin-top: 0.25rem;
+    color: #666;
+    font-size: 0.8rem;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+
+@media (max-width: 1400px) {
+    .asamblea-container {
+        padding: 1.5rem;
+    }
+    
+    .temas-cell {
+        max-width: 250px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .asamblea-container {
+        padding: 1rem;
+    }
+    
+    .asambleas-table {
+        font-size: 0.85rem;
+    }
+    
+    .temas-cell {
+        max-width: 200px;
+    }
+}
+
+@media (max-width: 768px) {
+    .asamblea-container {
+        padding: 0.5rem;
+    }
+    
+    .asamblea-content {
+        padding: 1rem;
+    }
+    
+    .temas-cell {
+        display: none;
+    }
+    
+    .asambleas-table th:nth-child(4),
+    .asambleas-table td:nth-child(4) {
+        display: none;
+    }
+    
+    .info-cards {
+        grid-template-columns: 1fr;
+        gap: 1rem;
     }
 }

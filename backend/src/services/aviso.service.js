@@ -6,11 +6,19 @@ import UserSchema from "../entity/user.entity.js";
 export async function crearAvisoService(data){
     try {
         const avisoRepository = AppDataSource.getRepository(Aviso);
+        let fechaExpiracionFinal = null;
+        if (data.fechaExpiracion) {
+            if (typeof data.fechaExpiracion === "string") {
+                fechaExpiracionFinal = new Date(data.fechaExpiracion);
+            } else {
+                fechaExpiracionFinal = data.fechaExpiracion;
+            }
+        }
         const nuevoAviso = avisoRepository.create({
             descripcion: data.descripcion,
             categoria: data.categoria,
             fecha: data.fecha,
-            fechaExpiracion: data.fechaExpiracion,
+            fechaExpiracion: fechaExpiracionFinal,
             destinatario: data.destinatario || null,
             archivoAdjunto: data.archivoAdjunto || null,
             createdAt: new Date(),
@@ -44,6 +52,8 @@ export async function obtenerAvisosService(){
 export async function modificarAvisoService(id, camposActualizar) {
     try {
         const avisoRepository = AppDataSource.getRepository(Aviso);
+        console.log('[modificarAvisoService] id:', id);
+        console.log('[modificarAvisoService] camposActualizar:', camposActualizar);
 
         const avisoFound = await avisoRepository.findOne({
             where: { id: id },
@@ -51,7 +61,12 @@ export async function modificarAvisoService(id, camposActualizar) {
 
         if (!avisoFound) return [null, "No se encontró el aviso"];
 
-        await avisoRepository.update(id, camposActualizar);
+        try {
+            await avisoRepository.update(id, camposActualizar);
+        } catch (updateError) {
+            console.error('[modificarAvisoService] Error en update:', updateError);
+            return [null, 'Error interno al actualizar el aviso: ' + updateError.message];
+        }
         return [await avisoRepository.findOne({ where: { id: id } }), null];
     } catch (error) {
         console.error("Error al actualizar el aviso", error);

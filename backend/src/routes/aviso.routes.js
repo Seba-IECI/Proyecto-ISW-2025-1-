@@ -17,15 +17,14 @@ const router = Router();
 router 
     .use(authenticateJwt);
 
+import { isAdminOrDirectiva } from "../middlewares/authorization.middleware.js";
+
 router
-    .post("/crearAviso",authenticateJwt, isAdmin, uploadAviso.single("archivoAdjunto"), crearAvisoController)
-    .post("/crearAviso", authenticateJwt, isDirectiva, uploadAviso.single("archivoAdjunto"), crearAvisoController)
+    .post("/crearAviso", authenticateJwt, isAdminOrDirectiva, uploadAviso.single("archivoAdjunto"), crearAvisoController)
     .get("/obtenerAvisos", authenticateJwt, isAdmin, obtenerAvisosController)
     .get("/obtenerAvisos", authenticateJwt, isDirectiva, obtenerAvisosController)
-    .patch("/modificarAviso/:id", authenticateJwt, isAdmin, uploadAviso.single("archivoAdjunto"), modificarAvisoController)
-    .patch("/modificarAviso/:id", authenticateJwt, isDirectiva,uploadAviso.single("archivoAdjunto"), modificarAvisoController)
-    .delete("/eliminarAviso/:id", authenticateJwt, isAdmin, eliminarAvisoController)
-    .delete("/eliminarAviso/:id", authenticateJwt, isDirectiva, eliminarAvisoController);
+    .patch("/modificarAviso/:id", authenticateJwt, isAdminOrDirectiva, uploadAviso.single("archivoAdjunto"), modificarAvisoController)
+    .delete("/eliminarAviso/:id", authenticateJwt, isAdminOrDirectiva, eliminarAvisoController)
     
 
 export default router;

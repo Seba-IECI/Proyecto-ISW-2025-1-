@@ -5,13 +5,14 @@ import {
     getAsambleaByIdService,
     updateAsambleaService,
     deleteAsambleaService,
+    changeAsambleaEstadoService,
 } from "../services/asamblea.service.js";
 import {
     handleErrorClient,
     handleErrorServer,
     handleSuccess,
 } from "../handlers/responseHandlers.js";
-import { asambleaQueryValidation, asambleaUpdateValidation } from "../validations/asamblea.validation.js";
+import { asambleaQueryValidation, asambleaUpdateValidation, asambleaEstadoValidation } from "../validations/asamblea.validation.js";
 
 export async function crearAsamblea(req, res) {
     try {
@@ -20,14 +21,14 @@ export async function crearAsamblea(req, res) {
             return handleErrorClient(res, 400, error.details[0].message);
         }
 
-        const { tema, lugar, fecha } = value;
+        const { tema, lugar, fecha, temasATratar } = value;
         const creador = req.user?.nombreCompleto ;
 
-        const [asamblea, errorAsamblea] = await crearAsambleaService({ tema, lugar, fecha, creador });
+        const [asamblea, errorAsamblea] = await crearAsambleaService({ tema, lugar, fecha, temasATratar, creador });
 
         if (errorAsamblea) return handleErrorClient(res, 404, errorAsamblea);
 
-        handleSuccess(res, 200, "Asamblea creada", asamblea);
+        handleSuccess(res, 200, "Asamblea creada y notificaciones enviadas a todos los usuarios", asamblea);
     } catch (error) {
         handleErrorServer(res, 500, error.message);
     }
@@ -91,6 +92,27 @@ export async function getAsambleaById(req, res) {
         if (errorAsamblea) return handleErrorClient(res, 404, errorAsamblea);
 
         handleSuccess(res, 200, "Asamblea encontrada", asamblea);
+    } catch (error) {
+        handleErrorServer(res, 500, error.message);
+    }
+}
+
+export async function changeAsambleaEstado(req, res) {
+    try {
+        const { id } = req.params;
+        const { error, value } = asambleaEstadoValidation.validate(req.body);
+        
+        if (error) {
+            return handleErrorClient(res, 400, error.details[0].message);
+        }
+
+        const { estado } = value;
+
+        const [asamblea, errorAsamblea] = await changeAsambleaEstadoService(id, estado);
+
+        if (errorAsamblea) return handleErrorClient(res, 400, errorAsamblea);
+
+        handleSuccess(res, 200, "Estado de la asamblea actualizado exitosamente", asamblea);
     } catch (error) {
         handleErrorServer(res, 500, error.message);
     }

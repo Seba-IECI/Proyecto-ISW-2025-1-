@@ -1,13 +1,28 @@
 "use strict";
 import Asamblea from "../entity/asamblea.entity.js";
 import { AppDataSource } from "../config/configDb.js";
+import { getAllUserEmailsService } from "./user.service.js";
+import { sendNewAsambleaNotification } from "./email.service.js";
 
 export async function crearAsambleaService(query){
     try {
-        const {tema, lugar, fecha, creador} = query;
+        const {tema, lugar, fecha, temasATratar, creador} = query;
         const asambleaRepository = AppDataSource.getRepository(Asamblea);
 
-        const asambleaExistente = await asambleaRepository.findOne({ where: { fecha } });
+        
+        const fechaInicio = new Date(fecha);
+        fechaInicio.setHours(0, 0, 0, 0);
+        const fechaFin = new Date(fecha);
+        fechaFin.setHours(23, 59, 59, 999);
+
+        const asambleaExistente = await asambleaRepository
+            .createQueryBuilder("asamblea")
+            .where("asamblea.fecha >= :fechaInicio AND asamblea.fecha <= :fechaFin", {
+                fechaInicio,
+                fechaFin
+            })
+            .getOne();
+
         if (asambleaExistente) {
             return [null, "Ya existe una asamblea para la fecha indicada"];
         }
@@ -15,12 +30,28 @@ export async function crearAsambleaService(query){
         const nuevaAsamblea = asambleaRepository.create({
             tema,
             lugar,
-            fecha,
+            fecha: new Date(fecha), 
+            temasATratar,
             creador,
             createdAt: new Date(),
         });
 
         await asambleaRepository.save(nuevaAsamblea);
+
+        
+        try {
+            const [usuarios, errorUsuarios] = await getAllUserEmailsService();
+            if (!errorUsuarios && usuarios && usuarios.length > 0) {
+                await sendNewAsambleaNotification(usuarios, nuevaAsamblea);
+                console.log(`Notificaciones enviadas para la asamblea: ${nuevaAsamblea.tema}`);
+            } else {
+                console.log("No se encontraron usuarios para notificar sobre la nueva asamblea");
+            }
+        } catch (emailError) {
+            console.error("Error al enviar notificaciones de asamblea:", emailError);
+            
+        }
+
         return [nuevaAsamblea, null];
 
     } catch (error) {
@@ -32,19 +63,8 @@ export async function crearAsambleaService(query){
 export async function getAsambleaService(){
     try {
         const asambleaRepository = AppDataSource.getRepository(Asamblea);
-        const fechaActual = new Date().toISOString().split('T')[0];
         
-        
-        await asambleaRepository
-            .createQueryBuilder()
-            .update(Asamblea)
-            .set({ estado: "no realizada" })
-            .where("estado = :estado AND fecha < :fechaActual", { 
-                estado: "pendiente", 
-                fechaActual: fechaActual 
-            })
-            .execute();
-        
+        await updateAsambleasVencidas();
         
         const asamblea = await asambleaRepository.find();
 
@@ -71,7 +91,7 @@ export async function getAsambleaByIdService(id){
 export async function updateAsambleaService(query,body){
     try {
         const { id } = query;
-        const { tema, fecha, ...restBody } = body;  
+        const { tema, fecha, temasATratar, ...restBody } = body;  
         const asambleaRepository = AppDataSource.getRepository(Asamblea);
 
         const asambleaFound = await asambleaRepository.findOne({
@@ -81,35 +101,29 @@ export async function updateAsambleaService(query,body){
         if (!asambleaFound) return [null, "No se encontró la asamblea"];
 
         
-        let fechaFinal = fecha;
         if (fecha) {
-            let fechaDisponible = new Date(fecha);
-            let intentos = 0;
-            const maxIntentos = 365; 
             
-            while (intentos < maxIntentos) {
-                const asambleaConFecha = await asambleaRepository.findOne({ 
-                    where: { fecha: fechaDisponible.toISOString().split('T')[0] } 
-                });
-                
-                
-                if (!asambleaConFecha || asambleaConFecha.id === parseInt(id)) {
-                    fechaFinal = fechaDisponible.toISOString().split('T')[0];
-                    break;
-                }
-                
-                
-                fechaDisponible.setDate(fechaDisponible.getDate() + 1);
-                intentos++;
-            }
+            const fechaInicio = new Date(fecha);
+            fechaInicio.setHours(0, 0, 0, 0);
+            const fechaFin = new Date(fecha);
+            fechaFin.setHours(23, 59, 59, 999);
+
+            const asambleaConFecha = await asambleaRepository
+                .createQueryBuilder("asamblea")
+                .where("asamblea.fecha >= :fechaInicio AND asamblea.fecha <= :fechaFin", {
+                    fechaInicio,
+                    fechaFin
+                })
+                .andWhere("asamblea.id != :id", { id: parseInt(id) })
+                .getOne();
             
-            if (intentos >= maxIntentos) {
-                return [null, "No se pudo encontrar una fecha disponible"];
+            if (asambleaConFecha) {
+                return [null, "Ya existe una asamblea para la fecha indicada"];
             }
         }
 
         
-        const updateData = fechaFinal ? { fecha: fechaFinal, ...restBody } : restBody;
+        const updateData = fecha ? { fecha: new Date(fecha), temasATratar, ...restBody } : { temasATratar, ...restBody };
         
         await asambleaRepository.update(id, updateData);
         return [await asambleaRepository.findOne({where: { id: id}}), null];
@@ -133,6 +147,98 @@ export async function deleteAsambleaService(query){
         return [asambleaFound, null];
     } catch (error) {
         console.error("Error al eliminar la asamblea", error);
+        return [null, "Error interno del servidor"];
+    }
+}
+
+export async function changeAsambleaEstadoService(asambleaId, nuevoEstado) {
+    try {
+        const asambleaRepository = AppDataSource.getRepository(Asamblea);
+        
+        
+        const asamblea = await asambleaRepository.findOne({
+            where: { id: asambleaId }
+        });
+        
+        if (!asamblea) {
+            return [null, "No se encontró la asamblea"];
+        }
+        
+        
+        const estadosValidos = ["pendiente", "realizada", "no realizada"];
+        if (!estadosValidos.includes(nuevoEstado)) {
+            return [null, "Estado inválido. Los estados válidos son: pendiente, realizada, no realizada"];
+        }
+        
+        
+        if (asamblea.estado !== "pendiente" && nuevoEstado === "realizada") {
+            return [null, "Solo se puede cambiar a 'realizada' desde estado 'pendiente'"];
+        }
+        
+        
+        const fechaActual = new Date();
+        const fechaAsamblea = new Date(asamblea.fecha);
+        fechaAsamblea.setHours(23, 59, 59, 999); 
+        
+        if (nuevoEstado === "realizada" && fechaActual > fechaAsamblea) {
+            return [null, "No se puede cambiar a 'realizada' después de la fecha programada"];
+        }
+        
+        
+        await asambleaRepository.update(asambleaId, { estado: nuevoEstado });
+        
+        const asambleaActualizada = await asambleaRepository.findOne({
+            where: { id: asambleaId }
+        });
+        
+        return [asambleaActualizada, null];
+        
+    } catch (error) {
+        console.error("Error al cambiar el estado de la asamblea:", error);
+        return [null, "Error interno del servidor"];
+    }
+}
+
+export async function updateAsambleasVencidas() {
+    try {
+        const asambleaRepository = AppDataSource.getRepository(Asamblea);
+        const fechaActual = new Date();
+        fechaActual.setHours(23, 59, 59, 999); 
+        
+        
+        const result = await asambleaRepository
+            .createQueryBuilder()
+            .update(Asamblea)
+            .set({ estado: "no realizada" })
+            .where("estado = :estado AND fecha < :fechaActual", { 
+                estado: "pendiente", 
+                fechaActual: fechaActual
+            })
+            .execute();
+        
+        return [result.affected, null];
+        
+    } catch (error) {
+        console.error("Error al actualizar asambleas vencidas:", error);
+        return [null, "Error interno del servidor"];
+    }
+}
+
+
+export async function verificarEstadosAsambleas() {
+    try {
+        const [cantidadActualizada, error] = await updateAsambleasVencidas();
+        
+        if (error) {
+            console.error("Error al verificar estados de asambleas:", error);
+            return [null, error];
+        }
+        
+        console.log(`Se actualizaron ${cantidadActualizada} asambleas a estado 'no realizada'`);
+        return [cantidadActualizada, null];
+        
+    } catch (error) {
+        console.error("Error en verificación automática de estados:", error);
         return [null, "Error interno del servidor"];
     }
 }

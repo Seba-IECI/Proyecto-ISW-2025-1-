@@ -39,7 +39,8 @@ async function setupServer() {
       }),
     );
 
-    app.use("/uploads/avisos", express.static("uploads/avisos"));
+    app.use("/api/uploads/avisos", express.static("uploads/avisos"));
+    app.use("/api/uploads/actas", express.static("uploads/actas"));
 
     app.use(cookieParser());
 

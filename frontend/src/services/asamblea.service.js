@@ -44,3 +44,12 @@ export async function deleteAsamblea(id) {
         return error.response.data;
     }
 }
+
+export async function changeAsambleaEstado(id, estado) {
+    try {
+        const response = await axios.patch(`/asamblea/changeEstado/${id}`, { estado });
+        return response.data;
+    } catch (error) {
+        return error.response.data;
+    }
+}

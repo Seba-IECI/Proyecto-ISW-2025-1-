@@ -9,12 +9,15 @@ export function useDeleteAviso(onSuccess) {
     setLoading(true);
     setError("");
     try {
-      await deleteAviso(id);
+      const res = await deleteAviso(id);
       if (onSuccess) onSuccess();
+      setLoading(false);
+      return res;
     } catch (err) {
       setError("Error al eliminar aviso");
+      setLoading(false);
+      return { error: true };
     }
-    setLoading(false);
   };
 
   return { handleDelete, loading, error };

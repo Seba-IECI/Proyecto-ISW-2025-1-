@@ -21,7 +21,7 @@ const AsambleaSchema = new EntitySchema({
             nullable: false,
         },
         fecha:{
-            type: "date",
+            type: "timestamp",
             nullable: false,
         },
         estado: {
@@ -34,6 +34,10 @@ const AsambleaSchema = new EntitySchema({
             type: "varchar",
             length: 255,
             nullable: false,
+        },
+        temasATratar: {
+            type: "text",
+            nullable: true,
         },
         createdAt:{
           type: "timestamp with time zone",

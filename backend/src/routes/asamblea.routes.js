@@ -8,6 +8,7 @@ import {
     getAsambleaById,
     updateAsamblea,
     deleteAsamblea,
+    changeAsambleaEstado,
 }from "../controllers/asamblea.controller.js";
 
 const router = Router();
@@ -20,6 +21,7 @@ router
     .get("/getAsamblea", getAsamblea)
     .get("/getAsamblea/:id", getAsambleaById)
     .patch("/updateAsamblea/:id",isAdminOrDirectiva, updateAsamblea)
+    .patch("/changeEstado/:id",isAdminOrDirectiva, changeAsambleaEstado)
     .delete("/deleteAsamblea/:id",isAdminOrDirectiva, deleteAsamblea);
 
 export default router;

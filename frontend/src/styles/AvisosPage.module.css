@@ -1,3 +1,183 @@
+.avisosContainer {
+  padding: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.avisosHeader {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.avisosTitle {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+  margin-bottom: 0.5rem;
+  margin-top: 3rem;
+}
+
+.avisosSubtitle {
+  font-size: 1.1rem;
+  color: #666;
+  margin: 0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.avisosContent {
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e9ecef;
+}
+
+.createSection {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.createSection h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.createSection p {
+  color: #666;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.btnCreateAviso {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btnCreateAviso:hover {
+  background: #0056b3;
+}
+
+.infoCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.infoCard {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 5px;
+  text-align: center;
+  border: 1px solid #e9ecef;
+}
+
+.infoCardIcon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.infoCard h3 {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.infoCard p {
+  color: #666;
+  line-height: 1.4;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.avisosPopup {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  max-width: 450px;
+  width: 90%;
+  border: 1px solid #e9ecef;
+}
+
+.avisosPopupHeader {
+  background: #007bff;
+  color: white;
+  padding: 1.5rem;
+  text-align: center;
+  position: relative;
+}
+
+.avisosPopupHeader h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  transition: background 0.3s ease;
+}
+
+.closeBtn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.avisosForm {
+  padding: 1.5rem;
+}
+
+.formGroup {
+  margin-bottom: 1.25rem;
+}
+
+.formGroup label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.fieldError {
+  border: 1px solid #c00;
+}
+
+.errorMessage {
+  color: #c00;
+  font-size: 0.95rem;
+  margin-top: 0.3rem;
+}
+
+.infoMessage {
+  color: #1976d2;
+  font-size: 0.95rem;
+  margin-top: 0.3rem;
+}
 .container {
   max-width: 900px;
   margin: 0 auto;
@@ -88,4 +268,5 @@
   padding: 0.3rem 0.8rem;
   border-radius: 4px;
   cursor: pointer;
+  margin-top: 1rem;
 }

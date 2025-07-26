@@ -10,18 +10,29 @@ import {
 
 export async function subidaActa(req, res) {
   try {
-    const { nombre } = req.body;
+    const { nombre, asambleaId } = req.body;
     let actaPath = req.file?.path;
+    const subidoPor = req.user?.nombreCompleto;
 
     if (!actaPath) {
       return handleErrorClient(res, 400, "Acta no subida");
     }
+
+    if (!subidoPor) {
+      return handleErrorClient(res, 400, "Usuario no autenticado");
+    }
+
     // Construye la URL completa para acceder al acta subida
     const baseUrl = `http://${HOST}:${PORT}/api/uploads/actas/`;
     // Obtiene el nombre del acta y lo añade a la URL base
     actaPath = baseUrl + path.basename(actaPath);
 
-    const [newActa, error] = await subidaActaService({ nombre, actaPath });
+    const [newActa, error] = await subidaActaService({ 
+      nombre, 
+      actaPath, 
+      subidoPor, 
+      asambleaId: asambleaId ? parseInt(asambleaId) : null 
+    });
 
     if (error) return handleErrorClient(res, 400, error);
 
@@ -48,7 +59,7 @@ export async function getActas(req, res) {
 export async function actualizarActa(req, res) {
   try {
     const { id } = req.params;
-    const { nombre } = req.body;
+    const { nombre, asambleaId } = req.body;
     let actaPath = req.file?.path;
 
    
@@ -59,6 +70,9 @@ export async function actualizarActa(req, res) {
     
     const actaData = {};
     if (nombre) actaData.nombre = nombre;
+    if (asambleaId !== undefined) {
+      actaData.asambleaId = asambleaId ? parseInt(asambleaId) : null;
+    }
     
     
     if (actaPath) {
