@@ -2,6 +2,7 @@
 import {
     crearAsambleaService,
     getAsambleaService,
+    getAsambleasDisponiblesService,
     getAsambleaByIdService,
     updateAsambleaService,
     deleteAsambleaService,
@@ -41,6 +42,18 @@ export async function getAsamblea(req, res) {
         if (errorAsamblea) return handleErrorClient(res, 404, errorAsamblea);
 
         handleSuccess(res, 200, "Asambleas encontradas", asamblea);
+    } catch (error) {
+        handleErrorServer(res, 500, error.message);
+    }
+}
+
+export async function getAsambleasDisponibles(req, res) {
+    try {
+        const [asambleasDisponibles, errorAsamblea] = await getAsambleasDisponiblesService();
+
+        if (errorAsamblea) return handleErrorClient(res, 404, errorAsamblea);
+
+        handleSuccess(res, 200, "Asambleas disponibles encontradas", asambleasDisponibles);
     } catch (error) {
         handleErrorServer(res, 500, error.message);
     }
