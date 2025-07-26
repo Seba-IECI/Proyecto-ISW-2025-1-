@@ -5,7 +5,6 @@ import { authenticateJwt } from "../middlewares/authentication.middleware.js";
 import {
     crearAsamblea,
     getAsamblea,
-    getAsambleasDisponibles,
     getAsambleaById,
     updateAsamblea,
     deleteAsamblea,
@@ -20,7 +19,6 @@ router
 router
     .post("/crearAsamblea",isAdminOrDirectiva,crearAsamblea)
     .get("/getAsamblea", getAsamblea)
-    .get("/getAsambleasDisponibles", getAsambleasDisponibles)
     .get("/getAsamblea/:id", getAsambleaById)
     .patch("/updateAsamblea/:id",isAdminOrDirectiva, updateAsamblea)
     .patch("/changeEstado/:id",isAdminOrDirectiva, changeAsambleaEstado)

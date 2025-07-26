@@ -19,11 +19,8 @@ const useGetActa = () => {
                     archivo: acta.archivo,
                     subidoPor: acta.subidoPor,
                     createdAt: acta.createdAt,
-                    updatedAt: acta.updatedAt,
-                    asambleaId: acta.asambleaId,
-                    asamblea: acta.asamblea
+                    updatedAt: acta.updatedAt
                 })) || [];
-                console.log("Actas formateadas con asamblea:", formattedData);
                 setActas(formattedData);
             } else {
                 setError(response.message || 'Error al obtener las actas');
