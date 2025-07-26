@@ -17,6 +17,9 @@ export const sendEmail = async (to, subject, text, html, attachment = null) => {
                 user: emailConfig.user,
                 pass: emailConfig.pass,
             },
+            // Timeout explícito para evitar cuelgues
+            socketTimeout: 10000,
+            connectionTimeout: 10000,
         });
 
         let mailOptions = {
@@ -27,7 +30,6 @@ export const sendEmail = async (to, subject, text, html, attachment = null) => {
             html,
         };
 
-        
         if (attachment && attachment.path && attachment.filename) {
             mailOptions.attachments = [
                 {
@@ -35,16 +37,19 @@ export const sendEmail = async (to, subject, text, html, attachment = null) => {
                     path: attachment.path,
                 },
             ];
-            
             if (attachment.url) {
                 mailOptions.html += `<br/><br/>Descargar archivo adjunto: <a href="${attachment.url}">${attachment.filename}</a>`;
             }
         }
 
-        await transporter.sendMail(mailOptions);
+        // Logging antes de enviar
+        console.log('[EMAIL SERVICE] Enviando correo:', { to, subject, text, html });
+        const result = await transporter.sendMail(mailOptions);
+        console.log('[EMAIL SERVICE] Correo enviado:', result);
         return mailOptions;
     } catch (error) {
         console.error("Error enviando el correo: %s", error.message);
-        throw new Error("Error enviando el correo: " + error.message);
+        // No lanzar error, solo loguear y continuar para evitar cuelgue
+        return null;
     }
 };

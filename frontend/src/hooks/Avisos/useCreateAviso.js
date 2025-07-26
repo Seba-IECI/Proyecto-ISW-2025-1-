@@ -9,12 +9,15 @@ export function useCreateAviso(onSuccess) {
     setLoading(true);
     setError("");
     try {
-      await createAviso(formData);
+      const result = await createAviso(formData);
       if (onSuccess) onSuccess();
+      setLoading(false);
+      return result;
     } catch (err) {
       setError(err.response?.data?.message || "Error al crear aviso");
+      setLoading(false);
+      return { error: err.response?.data?.message || "Error al crear aviso" };
     }
-    setLoading(false);
   };
 
   return { handleCreate, loading, error };
