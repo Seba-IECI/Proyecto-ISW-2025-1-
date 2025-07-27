@@ -270,3 +270,167 @@
   cursor: pointer;
   margin-top: 1rem;
 }
+
+/* Estilos específicos para la vista de usuarios (AvisosU) */
+.filtersSection {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  border: 1px solid #e9ecef;
+}
+
+.listHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.listHeader h3 {
+  color: #333;
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.listHeader p {
+  color: #666;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.loadingMessage, .errorMessage, .emptyMessage {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1rem;
+  color: #666;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.errorMessage {
+  color: #dc3545;
+  background: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+.avisoDescripcion {
+  position: relative;
+}
+
+.urgentBadge {
+  background: #dc3545;
+  color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  margin-left: 0.5rem;
+  display: inline-block;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+.categoriaBadge {
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.categoriaBadge.urgente {
+  background: #dc3545;
+  color: white;
+}
+
+.categoriaBadge.general {
+  background: #6c757d;
+  color: white;
+}
+
+.categoriaBadge.recordatorio {
+  background: #ffc107;
+  color: #212529;
+}
+
+.fechaExpiracion {
+  color: #dc3545;
+  font-weight: 500;
+}
+
+.sinExpiracion {
+  color: #28a745;
+  font-style: italic;
+}
+
+.destinatarioEspecifico {
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.destinatarioGeneral {
+  color: #666;
+  font-style: italic;
+}
+
+.downloadLink {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.downloadLink:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+.noAdjunto {
+  color: #999;
+  font-style: italic;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+  gap: 1rem;
+}
+
+.paginationBtn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.paginationBtn:hover:not(:disabled) {
+  background: #0056b3;
+}
+
+.paginationBtn:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+
+.paginationInfo {
+  color: #666;
+  font-weight: 500;
+}
