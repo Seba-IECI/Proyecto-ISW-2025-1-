@@ -28,14 +28,19 @@ function formatDateDMY(dateStr) {
 }
 
 function AvisosPage() {
-  const [avisosLocal, setAvisosLocal] = useState([]);
   const AVISOS_POR_PAGINA = 5;
   const [pagina, setPagina] = useState(1);
   const { user } = useAuth();
   const { avisos, loading, error, fetchAvisos } = useAvisos();
-  const { handleCreate, loading: loadingCreate, error: errorCreate } = useCreateAviso(fetchAvisos);
-  const { handleUpdate, loading: loadingUpdate, error: errorUpdate } = useUpdateAviso(fetchAvisos);
-  const { handleDelete, loading: loadingDelete, error: errorDelete } = useDeleteAviso(fetchAvisos);
+  
+  // Callbacks que refrescan los datos después de operaciones
+  const onSuccessCallback = () => {
+    fetchAvisos(); // Refrescar datos desde el servidor
+  };
+  
+  const { handleCreate, loading: loadingCreate, error: errorCreate } = useCreateAviso(onSuccessCallback);
+  const { handleUpdate, loading: loadingUpdate, error: errorUpdate } = useUpdateAviso(onSuccessCallback);
+  const { handleDelete, loading: loadingDelete, error: errorDelete } = useDeleteAviso(onSuccessCallback);
 
   const todayStr = (() => {
     const today = new Date();
@@ -57,15 +62,7 @@ function AvisosPage() {
   const [loadingForm, setLoading] = useState(false);
   const [errorForm, setError] = useState("");
 
-  useEffect(() => {
-    fetchAvisos();
-  }, []);
-
-  useEffect(() => {
-    if (Array.isArray(avisos) && avisosLocal.length === 0) {
-      setAvisosLocal(avisos);
-    }
-  }, [avisos]);
+  // Eliminar useEffect innecesarios ya que usamos directamente avisos del hook
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -141,8 +138,7 @@ function AvisosPage() {
             archivoAdjunto: null,
           });
           setEditId(null);
-          setAvisosLocal(prev => prev.map(aviso => aviso.id === editId ? result : aviso));
-          fetchAvisos();
+          // No necesitamos actualizar avisosLocal manualmente, onSuccessCallback se encarga
         }
         
       } else {
@@ -158,7 +154,7 @@ function AvisosPage() {
             archivoAdjunto: null,
           });
           setEditId(null);
-          fetchAvisos();
+          // No necesitamos llamar fetchAvisos aquí, onSuccessCallback se encarga
         } else {
           setError(result?.error || "Error al crear aviso");
           showErrorAlert("Error", result?.error || "Error al crear aviso");
@@ -189,10 +185,6 @@ function AvisosPage() {
       destinatario: aviso.destinatario || "",
       archivoAdjunto: null
     });
-function formatFechaInput(dateStr) {
-  const match = dateStr.match(/^\d{4}-\d{2}-\d{2}/);
-  return match ? match[0] : "";
-}
   };
 
   const handleDeleteAviso = async (id) => {
@@ -202,18 +194,10 @@ function formatFechaInput(dateStr) {
       const response = await handleDelete(id);
       if (!response || response.error) {
         showErrorAlert("Error", "Error al eliminar el aviso");
-function formatFechaInput(dateStr) {
-  if (!dateStr) return "";
-  // Si ya está en formato yyyy-mm-dd, retorna tal cual
-  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
-  // Si viene con hora, extrae solo la parte de fecha
-  const match = dateStr.match(/^\d{4}-\d{2}-\d{2}/);
-  return match ? match[0] : "";
-}
         return;
       }
       showSuccessAlert("Aviso eliminado", "El aviso fue eliminado exitosamente.");
-      setAvisosLocal(prev => prev.filter(aviso => aviso.id !== id));
+      // No necesitamos actualizar avisosLocal manualmente, onSuccessCallback se encarga
     } catch (err) {
       console.error("Error al eliminar aviso:", err);
       showErrorAlert("Error", "Error al eliminar el aviso");
@@ -388,7 +372,7 @@ function formatFechaInput(dateStr) {
                 </tr>
               </thead>
               <tbody>
-                {avisosLocal.map((aviso) => (
+                {avisos.map((aviso) => (
                   <tr key={aviso.id}>
                     {(user?.rol === "admin" || user?.rol === "directiva" || user?.rol === "administrador") && (
                       <td>

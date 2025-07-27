@@ -10,13 +10,16 @@ export function useDeleteAviso(onSuccess) {
     setError("");
     try {
       const res = await deleteAviso(id);
-      if (onSuccess) onSuccess();
+      if (onSuccess) {
+        onSuccess();
+      }
       setLoading(false);
       return res;
     } catch (err) {
-      setError("Error al eliminar aviso");
+      const errorMessage = err.response?.data?.message || "Error al eliminar aviso";
+      setError(errorMessage);
       setLoading(false);
-      return { error: true };
+      return { error: true, message: errorMessage };
     }
   };
 

@@ -8,14 +8,16 @@ export function useAvisos() {
 
   const fetchAvisos = async () => {
     setLoading(true);
+    setError("");
     try {
       const data = await getAvisos();
       setAvisos(data);
-      setError("");
     } catch (err) {
       setError("Error al cargar avisos");
+      console.error("Error fetching avisos:", err);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
