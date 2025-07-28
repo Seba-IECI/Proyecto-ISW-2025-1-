@@ -117,7 +117,7 @@ ${asamblea.temasATratar}
     
     <div style="background-color: #e8f6ff; padding: 15px; border-left: 4px solid #3498db; margin: 20px 0;">
         <p style="margin: 0; color: #2c3e50;">
-            <strong>Importante:</strong> Por favor, asegúrese de asistir puntualmente a la asamblea y confirmar su asistencia en la página.
+            <strong>Importante:</strong> Por favor, asegúrese de asistir puntualmente a la asamblea.
         </p>
     </div>
     

@@ -163,6 +163,11 @@ export async function deleteAsambleaService(query){
 
         if (!asambleaFound) return [null, "No se encontró la asamblea"];
 
+        
+        if (asambleaFound.estado === "realizada") {
+            return [null, "No se puede eliminar una asamblea con estado realizada"];
+        }
+
         await asambleaRepository.delete(id);
         return [asambleaFound, null];
     } catch (error) {
