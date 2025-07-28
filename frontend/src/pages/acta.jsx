@@ -334,30 +334,31 @@ const Acta = () => {
 
            
             {isCreatePopupOpen && (
-                <div className="popup-overlay">
-                    <div className="popup">
-                        <div className="popup-header">
+                <div className="bg">
+                    <div className="asamblea-popup">
+                        <div className="asamblea-popup-header">
                             <h2>Crear Nueva Acta</h2>
                             <button 
                                 onClick={() => {
                                     setIsCreatePopupOpen(false);
                                     resetForm();
                                 }}
-                                className="close-button"
+                                className="close-btn"
+                                type="button"
                             >
-                                ×
+                                ✕
                             </button>
                         </div>
-                        <form onSubmit={handleSubmit} className="popup-form">
+                        <form onSubmit={handleSubmit} className="asamblea-form">
                             <div className="form-group">
-                                <label htmlFor="nombre">Nombre del Acta:</label>
+                                <label htmlFor="nombre">Nombre del Acta *</label>
                                 <input
                                     type="text"
                                     id="nombre"
                                     name="nombre"
                                     value={formData.nombre}
                                     onChange={handleChange}
-                                    placeholder="Ingrese el nombre del acta"
+                                    placeholder="Nombre del acta"
                                     required
                                 />
                             </div>
@@ -379,7 +380,7 @@ const Acta = () => {
                                 {loadingAsambleasDisponibles && <small>Cargando asambleas disponibles...</small>}
                             </div>
                             <div className="form-group">
-                                <label htmlFor="archivo">Archivo PDF:</label>
+                                <label htmlFor="archivo">Archivo PDF *</label>
                                 <input
                                     type="file"
                                     id="archivo"
@@ -389,23 +390,23 @@ const Acta = () => {
                                     required
                                 />
                             </div>
-                            <div className="popup-actions">
-                                <button 
-                                    type="submit" 
-                                    disabled={isCreating}
-                                    className="submit-button"
-                                >
-                                    {isCreating ? 'Creando...' : 'Crear Acta'}
-                                </button>
+                            <div className="form-actions">
                                 <button 
                                     type="button" 
                                     onClick={() => {
                                         setIsCreatePopupOpen(false);
                                         resetForm();
                                     }}
-                                    className="cancel-button"
+                                    className="btn-secondary"
                                 >
                                     Cancelar
+                                </button>
+                                <button 
+                                    type="submit" 
+                                    disabled={isCreating}
+                                    className="btn-primary"
+                                >
+                                    {isCreating ? 'Creando...' : 'Crear Acta'}
                                 </button>
                             </div>
                         </form>
@@ -415,27 +416,28 @@ const Acta = () => {
 
             
             {isEditPopupOpen && (
-                <div className="popup-overlay">
-                    <div className="popup">
-                        <div className="popup-header">
+                <div className="bg">
+                    <div className="asamblea-popup">
+                        <div className="asamblea-popup-header">
                             <h2>Editar Acta</h2>
                             <button 
                                 onClick={closeEditPopup}
-                                className="close-button"
+                                className="close-btn"
+                                type="button"
                             >
-                                ×
+                                ✕
                             </button>
                         </div>
-                        <form onSubmit={handleSubmit} className="popup-form">
+                        <form onSubmit={handleSubmit} className="asamblea-form">
                             <div className="form-group">
-                                <label htmlFor="nombre">Nombre del Acta:</label>
+                                <label htmlFor="nombre">Nombre del Acta *</label>
                                 <input
                                     type="text"
                                     id="nombre"
                                     name="nombre"
                                     value={formData.nombre}
                                     onChange={handleChange}
-                                    placeholder="Ingrese el nombre del acta"
+                                    placeholder="Nombre del acta"
                                     required
                                 />
                             </div>
@@ -478,20 +480,20 @@ const Acta = () => {
                                 />
                                 <small>Deje vacío si no desea cambiar el archivo</small>
                             </div>
-                            <div className="popup-actions">
-                                <button 
-                                    type="submit" 
-                                    disabled={isUpdating}
-                                    className="submit-button"
-                                >
-                                    {isUpdating ? 'Actualizando...' : 'Actualizar Acta'}
-                                </button>
+                            <div className="form-actions">
                                 <button 
                                     type="button" 
                                     onClick={closeEditPopup}
-                                    className="cancel-button"
+                                    className="btn-secondary"
                                 >
                                     Cancelar
+                                </button>
+                                <button 
+                                    type="submit" 
+                                    disabled={isUpdating}
+                                    className="btn-primary"
+                                >
+                                    {isUpdating ? 'Actualizando...' : 'Actualizar Acta'}
                                 </button>
                             </div>
                         </form>
