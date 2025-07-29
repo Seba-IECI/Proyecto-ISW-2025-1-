@@ -21,8 +21,7 @@ import { isAdminOrDirectiva } from "../middlewares/authorization.middleware.js";
 
 router
     .post("/crearAviso", authenticateJwt, isAdminOrDirectiva, uploadAviso.single("archivoAdjunto"), crearAvisoController)
-    .get("/obtenerAvisos", authenticateJwt, isAdmin, obtenerAvisosController)
-    .get("/obtenerAvisos", authenticateJwt, isDirectiva, obtenerAvisosController)
+    .get("/obtenerAvisos", authenticateJwt, obtenerAvisosController)
     .patch("/modificarAviso/:id", authenticateJwt, isAdminOrDirectiva, uploadAviso.single("archivoAdjunto"), modificarAvisoController)
     .delete("/eliminarAviso/:id", authenticateJwt, isAdminOrDirectiva, eliminarAvisoController)
     

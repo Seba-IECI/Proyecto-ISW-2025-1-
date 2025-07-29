@@ -11,6 +11,7 @@ import '@styles/styles.css';
 import Asamblea from '@pages/Asamblea';
 import Asambleas from '@pages/AsambleaU';
 import AvisosPage from "./pages/AvisosPage";
+import AvisosU from "./pages/avisosU";
 import Acta from '@pages/Acta';
 import ActaU from '@pages/ActaU';
 
@@ -50,7 +51,19 @@ const router = createBrowserRouter([
       },
       {
         path: '/avisos',
-        element: <AvisosPage />
+       element: (
+          <ProtectedRoute allowedRoles={['administrador', 'directiva']}>
+            <AvisosPage />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: '/avisosU',
+       element: (
+          <ProtectedRoute allowedRoles={['usuario']}>
+            <AvisosU />
+          </ProtectedRoute>
+        )
       },
        {
         path: '/acta',
