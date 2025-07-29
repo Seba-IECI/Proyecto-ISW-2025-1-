@@ -23,7 +23,7 @@ const ActaSchema = new EntitySchema({
     subidoPor: {
       type: "varchar",
       length: 255,
-      nullable: false,
+      nullable: true,
     },
     asambleaId: {
       type: "int",
