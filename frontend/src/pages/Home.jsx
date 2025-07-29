@@ -8,6 +8,17 @@ const Home = () => {
       <p style={{marginTop:"3rem", fontSize: 18, color: "#444", marginBottom: 24 }}>
         Aquí podrás mantenerte informado sobre las novedades, avisos y actividades de tu condominio. Accede fácilmente a los avisos publicados, consulta documentos importantes y entérate de las próximas asambleas o eventos.
       </p>
+      <div style={{ textAlign: "center", marginTop: "2rem" }}>
+        <img 
+          src="https://mnk.cl/admin/archivos/imagenes/proyectos/xmUwLhDKtiyZSqMuLxVX.jpg" 
+          alt="Condominio Sur - Vista exterior" 
+          style={{ 
+            maxWidth: "100%", 
+            height: "auto", 
+            borderRadius: "8px", 
+            boxShadow: "0 4px 12px rgba(0,0,0,0.1)" 
+          }} 
+        /></div> 
     </div>
   );
 };
