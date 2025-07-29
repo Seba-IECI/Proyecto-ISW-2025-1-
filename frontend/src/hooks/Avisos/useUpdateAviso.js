@@ -10,13 +10,16 @@ export function useUpdateAviso(onSuccess) {
     setError("");
     try {
       const result = await updateAviso(id, formData);
-      if (onSuccess) onSuccess();
+      if (onSuccess) {
+        onSuccess();
+      }
       setLoading(false);
       return result;
     } catch (err) {
-      setError(err.response?.data?.message || "Error al actualizar aviso");
+      const errorMessage = err.response?.data?.message || "Error al actualizar aviso";
+      setError(errorMessage);
       setLoading(false);
-      return { error: err.response?.data?.message || "Error al actualizar aviso" };
+      return { error: errorMessage };
     }
   };
 

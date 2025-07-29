@@ -21,7 +21,8 @@ export async function subidaActa(req, res) {
     }
 
     if (!subidoPor) {
-      return handleErrorClient(res, 400, "Usuario no autenticado");
+      console.log("Advertencia: Usuario no completamente autenticado, usando valor por defecto");
+
     }
 
     // Construye la URL completa para acceder al acta subida
@@ -38,7 +39,7 @@ export async function subidaActa(req, res) {
     const [newActa, error] = await subidaActaService({ 
       nombre, 
       actaPath, 
-      subidoPor, 
+      subidoPor: subidoPor || null, // Asegurarse de pasar null en lugar de undefined
       asambleaId: asambleaIdParsed
     });
 

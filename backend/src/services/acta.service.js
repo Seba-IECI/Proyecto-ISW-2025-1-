@@ -37,7 +37,7 @@ export async function subidaActaService(actaData) {
     const newActa = actaRepository.create({
       nombre,
       archivo: actaPath, 
-      subidoPor,
+      subidoPor: subidoPor || null, // Asegurarse de que sea null en lugar de undefined
       asambleaId,
     });
     console.log("Acta creada (antes de guardar):", newActa);
@@ -114,7 +114,7 @@ export async function actualizarActaService(id, actaData) {
     
     if (nombre) actaExistente.nombre = nombre;
     if (actaPath) actaExistente.archivo = actaPath;
-    if (subidoPor) actaExistente.subidoPor = subidoPor;
+    if (subidoPor !== undefined) actaExistente.subidoPor = subidoPor || null;
     if (asambleaId !== undefined) actaExistente.asambleaId = asambleaId;
 
     
